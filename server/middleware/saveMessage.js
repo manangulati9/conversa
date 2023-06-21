@@ -1,12 +1,12 @@
 const Message = require("../models/message");
 
-function saveMessageToDB({ sender, reciever, message, time }) {
+function saveMessageToDB({ sender, receiver, message, time }) {
   return new Promise((res, rej) => {
     try {
-      if (sender && reciever && message && time) {
+      if (sender && receiver && message && time) {
         const newMessage = Message.create({
           sender: sender,
-          reciever: reciever,
+          receiver: receiver,
           message: message,
           time: time,
         });

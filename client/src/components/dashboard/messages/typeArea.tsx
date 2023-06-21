@@ -19,7 +19,7 @@ export function TypeArea({ socket }: { socket: any }) {
           <Image src={Smiley} alt="" width={20} />
         </button>
         <input
-          className="flex-grow text-base font-semibold focus:outline-none text-white bg-[#090E1B]"
+          className="flex-grow text-base focus:outline-none text-white bg-[#090E1B]"
           placeholder="Start typing..."
           autoFocus
           name="msg"
@@ -51,7 +51,7 @@ function handleSubmit(
     const message = elements.msg.value;
     const data = {
       sender: username,
-      reciever: contact,
+      receiver: contact,
       message: message,
       time: getCurrentTime(),
     };

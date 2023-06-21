@@ -4,7 +4,7 @@ import { Input } from "@/components/primitives/input";
 import { Label } from "@/components/primitives/label";
 import { FormElements, User } from "@/lib/utils";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { FormEvent } from "react";
 import axios from "axios";
 import { useChatStore, useUserStore } from "@/lib/stores";

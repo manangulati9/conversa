@@ -29,12 +29,13 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log(`User connected ${socket.id}`);
   socket.on("join_room", (data) => {
-    const { contact } = data;
-    socket.join(contact);
+    const { sender, receiver } = data;
+    const room = generateRoomId(sender, receiver);
+    socket.join(room);
   });
   socket.on("send_message", (data) => {
-    const { sender, reciever } = data;
-    const room = generateRoomId(sender, reciever);
+    const { sender, receiver } = data;
+    const room = generateRoomId(sender, receiver);
     io.in(room).emit("receive_message", data);
     saveMessageToDB(data);
   });

@@ -50,7 +50,7 @@ export const useChatStore = create<ChatState>((set) => ({
   messages: [],
   setContact: (s: string) => set({ contact: s }),
   setUsername: (s: string) => set({ username: s }),
-  setMessages: (m: Message[]) => set({ messages: m }),
+  setMessages: (m: Message[]) => set({ messages: m.reverse() }),
   addMessage: (m: Message) =>
-    set((state) => ({ messages: [...state.messages, m] })),
+    set((state) => ({ messages: [m, ...state.messages] })),
 }));

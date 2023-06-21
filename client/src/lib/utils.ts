@@ -17,7 +17,7 @@ export interface User {
 
 export interface Message {
   sender: string;
-  reciever: string;
+  receiver: string;
   message: string;
   time: string;
 }

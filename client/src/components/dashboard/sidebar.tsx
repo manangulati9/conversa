@@ -80,7 +80,7 @@ function PastMessages({ socket }: { socket: any }) {
               <MessageItem name="Reyna" socket={socket} />
             </CommandItem>
             <CommandItem>
-              <MessageItem name="Raze" socket={socket} />
+              <MessageItem name="Manan" socket={socket} />
             </CommandItem>
           </div>
         </CommandGroup>
@@ -90,13 +90,13 @@ function PastMessages({ socket }: { socket: any }) {
 }
 
 function MessageItem({ name, socket }: { name: string; socket: any }) {
-  const username = useChatStore((state) => state.username);
+  const sender = useChatStore((state) => state.username);
   const setContact = useChatStore((state) => state.setContact);
-  const contact = name;
+  const receiver = name;
   const handleClick = () => {
-    if (username && contact) {
-      setContact(contact);
-      socket.emit("join_room", { username, contact });
+    if (sender && receiver) {
+      setContact(receiver);
+      socket.emit("join_room", { sender: sender, receiver: receiver });
     }
   };
   return (
