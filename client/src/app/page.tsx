@@ -1,13 +1,14 @@
 "use client";
-import Messages from "@/components/dashboard/messages";
+import Messages from "@/components/dashboard/messages/messageSection";
 import Sidebar from "@/components/dashboard/sidebar";
-import { Button } from "@/components/primitives/button";
-import { useToken } from "@/stores";
-import Link from "next/link";
+import { useUserStore } from "@/lib/stores";
 import { useEffect, useState } from "react";
+import io from "socket.io-client";
+
+const socket = io("http://localhost:4000");
 
 export default function () {
-  const token = useToken((state) => state.token);
+  const token = useUserStore((state) => state.token);
   const [windowSize, setwindowSize] = useState(0);
   useEffect(() => {
     setwindowSize(window.innerWidth);
@@ -17,20 +18,10 @@ export default function () {
     <>
       {token ? (
         <div className="text-sm flex">
-          <Sidebar />
-          {windowSize > 850 ? <Messages /> : null}
+          <Sidebar socket={socket} />
+          {windowSize > 850 ? <Messages socket={socket} /> : null}
         </div>
-      ) : (
-        <div className="grid place-items-center w-screen h-screen">
-          <div className="text-3xl font-bold grid place-items-center gap-6">
-            <p>Session has expired</p>
-            <p>Please login again</p>
-            <Link href="/login">
-              <Button className="w-fit font-semibold">Login</Button>
-            </Link>
-          </div>
-        </div>
-      )}
+      ) : null}
     </>
   );
 }

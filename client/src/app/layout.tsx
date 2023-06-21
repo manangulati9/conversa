@@ -18,7 +18,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
-      <body className={`h-screen w-screen ${inter.className}`}>{children}</body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }

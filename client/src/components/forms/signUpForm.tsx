@@ -7,13 +7,14 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { FormEvent } from "react";
 import axios from "axios";
-import { useToken, useUserStore } from "@/stores";
+import { useChatStore, useUserStore } from "@/lib/stores";
 
 export default function () {
   const router = useRouter();
-  const settoken = useToken((state) => state.settoken);
-  const setuser = useUserStore((state) => state.setUser);
-  const logout = useToken((state) => state.logout);
+  const setToken = useUserStore((state) => state.setToken);
+  const setUser = useUserStore((state) => state.setUser);
+  const logout = useUserStore((state) => state.logout);
+  const setUsername = useChatStore((state) => state.setUsername);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (e.target !== null) {
@@ -25,15 +26,16 @@ export default function () {
           email: elements.email.value,
           password: elements.pwd.value,
         };
-        const res = await axios.post("http://localhost:5000/register", data);
+        const res = await axios.post(process.env.NEXT_PUBLIC_REGISTER!, data);
         const newUser: User = res.data;
-        setuser(newUser);
+        setUser(newUser);
         localStorage.setItem("token", newUser.token);
-        settoken(newUser.token);
+        setToken(newUser.token);
         setTimeout(() => {
           logout();
           localStorage.removeItem("token");
         }, 7200000);
+        setUsername(newUser.first_name);
         router.push("/");
       } catch (error: any) {
         alert(error.response.data);
