@@ -1,11 +1,9 @@
-function generateRoomId(client1Id, client2Id) {
-  // Sort the client IDs alphabetically to ensure consistent room ID
-  const sortedIds = [client1Id, client2Id].sort();
+function generateRoomId(str1, str2) {
+  const combinedString = str1.concat(str2); // Combine the strings
+  const alphanumericString = combinedString.replace(/[^a-zA-Z0-9]/g, ""); // Remove special characters
+  const sortedString = alphanumericString.split("").sort().join(""); // Sort the characters
 
-  // Concatenate the client IDs with a separator
-  const roomId = sortedIds.join("-");
-
-  return roomId;
+  return sortedString;
 }
 
 module.exports = generateRoomId;

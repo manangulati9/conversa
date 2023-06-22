@@ -9,14 +9,16 @@ const messages = require("./routes/messages");
 const cors = require("cors");
 const { Server } = require("socket.io");
 const http = require("http");
-const saveMessageToDB = require("./middleware/saveMessage");
+const { saveMessageToDB } = require("./middleware/handleMessages");
 const generateRoomId = require("./utils");
+const chatData = require("./routes/chat-data");
 
 app.use(cors());
 app.use(express.json());
 app.use("/register", register);
 app.use("/login", login);
 app.use("/messages", messages);
+app.use("/chat-data", chatData);
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -38,6 +40,10 @@ io.on("connection", (socket) => {
     const room = generateRoomId(sender, receiver);
     io.in(room).emit("receive_message", data);
     saveMessageToDB(data);
+  });
+  socket.on("add_contact", (data) => {
+    const { username, contactUsername, contactName } = data;
+    saveContact(username, contactUsername, contactName);
   });
 });
 

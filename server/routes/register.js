@@ -8,16 +8,16 @@ router.post("/", async (req, res) => {
   // Our register logic starts here
   try {
     // Get user input
-    const { first_name, last_name, email, password } = req.body;
+    const { first_name, last_name, username, password } = req.body;
 
     // Validate user input
-    if (!(email && password && first_name && last_name)) {
+    if (!(username && password && first_name && last_name)) {
       res.status(400).send("All input is required");
     }
 
     // check if user already exist
     // Validate if user exist in our database
-    const oldUser = await User.findOne({ email });
+    const oldUser = await User.findOne({ username });
 
     if (oldUser) {
       return res.status(409).send("User Already Exist. Please Login");
@@ -30,14 +30,14 @@ router.post("/", async (req, res) => {
     const user = await User.create({
       first_name,
       last_name,
-      email: email.toLowerCase(), // sanitize: convert email to lowercase
+      username: username.toLowerCase(), // sanitize: convert username to lowercase
       password: encryptedPassword,
     });
 
     // Create token
     const name = first_name;
     const token = jwt.sign(
-      { user_id: user._id, email, name },
+      { user_id: user._id, username, name },
       process.env.TOKEN_KEY,
       {
         expiresIn: "24h",
