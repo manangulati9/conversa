@@ -1,7 +1,11 @@
 import { ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 export interface FormElements extends HTMLFormControlsCollection {
-  email: HTMLInputElement;
+  username: HTMLInputElement;
   pwd: HTMLInputElement;
   fname: HTMLInputElement;
   lname: HTMLInputElement;
@@ -10,9 +14,10 @@ export interface FormElements extends HTMLFormControlsCollection {
 export interface User {
   first_name: string;
   last_name: string;
-  email: string;
+  username: string;
   password: string;
   token: string;
+  contacts: Contact[];
 }
 
 export interface Message {
@@ -22,8 +27,9 @@ export interface Message {
   time: string;
 }
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+export interface Contact {
+  name: string;
+  username: string;
 }
 
 export function getCurrentTime() {

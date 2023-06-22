@@ -12,9 +12,9 @@ import { useChatStore, useUserStore } from "@/lib/stores";
 export default function () {
   const router = useRouter();
   const setToken = useUserStore((state) => state.setToken);
-  const setUser = useUserStore((state) => state.setUser);
+  const setUserInfo = useUserStore((state) => state.setUserInfo);
   const logout = useUserStore((state) => state.logout);
-  const setUsername = useChatStore((state) => state.setUsername);
+  const setName = useChatStore((state) => state.setName);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (e.target !== null) {
@@ -23,19 +23,19 @@ export default function () {
         const data = {
           first_name: elements.fname.value,
           last_name: elements.lname.value,
-          email: elements.email.value,
+          username: elements.username.value,
           password: elements.pwd.value,
         };
         const res = await axios.post(process.env.NEXT_PUBLIC_REGISTER!, data);
-        const newUser: User = res.data;
-        setUser(newUser);
-        localStorage.setItem("token", newUser.token);
-        setToken(newUser.token);
+        const user: User = res.data;
+        setUserInfo(user);
+        localStorage.setItem("token", user.token);
+        setToken(user.token);
         setTimeout(() => {
           logout();
           localStorage.removeItem("token");
         }, 7200000);
-        setUsername(newUser.first_name);
+        setName(user.first_name);
         router.push("/");
       } catch (error: any) {
         alert(error.response.data);
@@ -62,9 +62,9 @@ export default function () {
         </div>
       </div>
       <div className="grid w-full items-center gap-1.5">
-        <Label htmlFor="email">Email</Label>
-        <Input type="email" id="email" name="email" required />
-        <p className="text-sm text-muted-foreground">Enter your email</p>
+        <Label htmlFor="username">Username</Label>
+        <Input type="text" id="username" name="username" required />
+        <p className="text-sm text-muted-foreground">Choose a username</p>
       </div>
       <div className="grid w-full  items-center gap-1.5">
         <Label htmlFor="pwd">Password</Label>

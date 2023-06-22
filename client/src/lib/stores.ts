@@ -1,42 +1,58 @@
 import { create } from "zustand";
-import { Message, User } from "@/lib/utils";
+import { Contact, Message, User } from "@/lib/utils";
 import decode from "jwt-decode";
+import axios from "axios";
 
 interface UserState {
-  user: User;
+  userInfo: User;
   token: string | null;
-  setUser: (d: User) => void;
+  setUserInfo: (d: User) => void;
   setToken: (s: string) => void;
   logout: () => void;
 }
 
 interface ChatState {
+  name: string;
   username: string;
-  contact: string;
+  contactName: string;
+  contactUsername: string;
   messages: Message[];
-  setContact: (s: string) => void;
-  setUsername: (s: string) => void;
+  contacts: Contact[];
+  chatHistory: Message[];
+  setContacts: (c: Contact[]) => void;
+  addContact: (c: Contact) => void;
+  setContactName: (s: string) => void;
+  setContactUsername: (s: string) => void;
+  setName: (s: string) => void;
   setMessages: (m: Message[]) => void;
   addMessage: (m: Message) => void;
 }
 
 const token = localStorage.getItem("token");
-let username: string;
+let name = "";
+let username = "";
 if (token) {
-  const decoded: { name: string; email: string } = decode(token);
-  username = decoded.name;
+  const decoded: { name: string; username: string } = decode(token);
+  name = decoded.name;
+  username = decoded.username;
 }
+const res = await axios.post(process.env.NEXT_PUBLIC_GET_CHAT_DATA!, {
+  username,
+});
+let contactList: Contact[] = [];
+if (Array.isArray(res.data)) contactList = res.data;
 
 export const useUserStore = create<UserState>((set) => ({
-  user: {
+  userInfo: {
     first_name: "",
     last_name: "",
-    email: "",
+    username: "",
     password: "",
     token: "",
+    contacts: [],
   },
   token: token,
-  setUser: (userData: User) => set({ user: userData }),
+  setUserInfo: (userData: User) => set({ userInfo: userData }),
   setToken: (s: string) => set({ token: s }),
   logout: () => {
     set({ token: null });
@@ -45,11 +61,19 @@ export const useUserStore = create<UserState>((set) => ({
 }));
 
 export const useChatStore = create<ChatState>((set) => ({
+  name: name,
   username: username,
-  contact: "Yoru",
+  contactName: "",
+  contactUsername: "",
   messages: [],
-  setContact: (s: string) => set({ contact: s }),
-  setUsername: (s: string) => set({ username: s }),
+  contacts: contactList,
+  chatHistory: [],
+  setName: (s: string) => set({ name: s }),
+  setContactName: (s: string) => set({ contactName: s }),
+  setContactUsername: (s: string) => set({ contactUsername: s }),
+  setContacts: (c: Contact[]) => set({ contacts: c.sort() }),
+  addContact: (c: Contact) =>
+    set((state) => ({ contacts: [...state.contacts, c].sort() })),
   setMessages: (m: Message[]) => set({ messages: m.reverse() }),
   addMessage: (m: Message) =>
     set((state) => ({ messages: [m, ...state.messages] })),
