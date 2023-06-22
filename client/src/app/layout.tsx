@@ -1,3 +1,4 @@
+import { useUserStore } from "@/lib/stores";
 import "./globals.css";
 import { Inter } from "next/font/google";
 

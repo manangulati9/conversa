@@ -7,7 +7,7 @@ router.post("/", async (req, res) => {
     const { client1, client2 } = req.body;
     const messages = await Message.find(
       { sender: { $in: [client1, client2] } },
-      "message sender receiver"
+      "message sender receiver time"
     );
     res.status(200).json(messages);
   } catch (error) {

@@ -10,7 +10,9 @@ export function Messages({ socket }: { socket: any }) {
   const setMessages = useChatStore((state) => state.setMessages);
   const addMessage = useChatStore((state) => state.addMessage);
   const containerRef = useRef<HTMLDivElement>(null);
+
   socket.emit("join_room", { sender: username, receiver: contactUsername });
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -48,18 +50,28 @@ export function Messages({ socket }: { socket: any }) {
             (sender === contactUsername || sender === username)
           ) {
             if (sender === username) {
-              return <MessageSelf key={uuidv4()} message={msg.message} />;
+              return <MessageBubble key={uuidv4()} message={msg} type="send" />;
             } else {
-              return <MessageOther key={uuidv4()} message={msg.message} />;
+              return (
+                <MessageBubble key={uuidv4()} message={msg} type="receive" />
+              );
             }
           } else return null;
         })}
     </div>
   );
 }
-function MessageOther({ message }: { message: string }) {
-  return <p className="receive bubble w-fit">{message}</p>;
-}
-function MessageSelf({ message }: { message: string }) {
-  return <p className="send bubble w-fit">{message}</p>;
+function MessageBubble({ message, type }: { message: Message; type: string }) {
+  return (
+    <div className={`${type} bubble w-fit flex gap-3`}>
+      <p>{message.message}</p>
+      <p
+        className={`text-[0.7rem] leading-3 ${
+          type === "send" ? "text-slate-800" : "text-slate-500"
+        } h-fit self-end`}
+      >
+        {message.time}
+      </p>
+    </div>
+  );
 }

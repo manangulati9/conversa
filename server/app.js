@@ -34,6 +34,12 @@ io.on("connection", (socket) => {
     const { sender, receiver } = data;
     const room = generateRoomId(sender, receiver);
     socket.join(room);
+    const userCount = io.sockets.adapter.rooms.get(room).size;
+    if (userCount === 1) {
+      socket.emit("chat_status", false);
+    } else if (userCount === 2) {
+      socket.emit("chat_status", true);
+    }
   });
   socket.on("send_message", (data) => {
     const { sender, receiver } = data;
@@ -47,6 +53,17 @@ io.on("connection", (socket) => {
       await saveContact(username, contactUsername);
     } catch (error) {
       socket.emit("error", error);
+    }
+  });
+  socket.on("leave_room", (data) => {
+    const { sender, receiver } = data;
+    const room = generateRoomId(sender, receiver);
+    socket.leave(room);
+    const userCount = io.sockets.adapter.rooms.get(room).size;
+    if (userCount === 1) {
+      socket.emit("chat_status", false);
+    } else if (userCount === 2) {
+      socket.emit("chat_status", true);
     }
   });
 });

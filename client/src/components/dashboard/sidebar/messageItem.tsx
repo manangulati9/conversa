@@ -32,12 +32,12 @@ export function MessageItem({
           <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
-        <div>
+        <div className="text-left">
           <p className="text-base">{name}</p>
-          <p className="text-slate-400">message</p>
+          <p className="text-slate-400">{lastMessage}</p>
         </div>
       </div>
-      <p className="text-slate-400 text-center">09:10</p>
+      <p className="text-slate-400 text-center">{time}</p>
     </button>
   );
 }
