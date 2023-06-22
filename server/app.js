@@ -9,7 +9,7 @@ const messages = require("./routes/messages");
 const cors = require("cors");
 const { Server } = require("socket.io");
 const http = require("http");
-const { saveMessageToDB } = require("./middleware/handleMessages");
+const { saveMessageToDB, saveContact } = require("./middleware/handleMessages");
 const generateRoomId = require("./utils");
 const chatData = require("./routes/chat-data");
 
@@ -41,9 +41,13 @@ io.on("connection", (socket) => {
     io.in(room).emit("receive_message", data);
     saveMessageToDB(data);
   });
-  socket.on("add_contact", (data) => {
-    const { username, contactUsername, contactName } = data;
-    saveContact(username, contactUsername, contactName);
+  socket.on("add_contact", async (data) => {
+    try {
+      const { username, contactUsername } = data;
+      await saveContact(username, contactUsername);
+    } catch (error) {
+      socket.emit("error", error);
+    }
   });
 });
 

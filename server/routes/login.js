@@ -11,10 +11,9 @@ router.post("/", async (req, res) => {
       res.sendStatus(400).send("All input required");
     }
     const user = await User.findOne({ username: username });
-    const name = user.first_name;
     if (user && (await bcrypt.compare(password, user.password))) {
       const token = await jwt.sign(
-        { user_id: user._id, username, name },
+        { user_id: user._id, user },
         process.env.TOKEN_KEY,
         {
           expiresIn: "24h",

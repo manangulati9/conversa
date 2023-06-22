@@ -17,7 +17,7 @@ export default function ({ socket }: { socket: any }) {
 }
 
 function Header() {
-  const contact = useChatStore((state) => state.contact);
+  const contactName = useChatStore((state) => state.contactName);
   return (
     <header className="flex justify-between p-4 border-b-2 border-slate-500">
       <div className="flex gap-3">
@@ -26,7 +26,7 @@ function Header() {
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
         <div>
-          <p className="text-base font-semibold">{contact}</p>
+          <p className="text-base font-semibold">{contactName}</p>
           <p className="text-primary font-medium">Chat status</p>
         </div>
       </div>

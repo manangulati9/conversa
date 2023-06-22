@@ -11,9 +11,9 @@ interface MessageForm extends HTMLFormControlsCollection {
 }
 export function TypeArea({ socket }: { socket: any }) {
   const username = useChatStore((state) => state.username);
-  const contact = useChatStore((state) => state.contact);
+  const contactUsername = useChatStore((state) => state.contactUsername);
   return (
-    <form onSubmit={(e) => handleSubmit(e, socket, username, contact)}>
+    <form onSubmit={(e) => handleSubmit(e, socket, username, contactUsername)}>
       <footer className="flex w-full p-4 items-center gap-5 bg-[#090E1B]">
         <button>
           <Image src={Smiley} alt="" width={20} />
@@ -43,7 +43,7 @@ function handleSubmit(
   e: FormEvent<HTMLFormElement>,
   socket: any,
   username: string,
-  contact: string
+  contactUsername: string
 ) {
   e.preventDefault();
   if (e.target) {
@@ -51,7 +51,7 @@ function handleSubmit(
     const message = elements.msg.value;
     const data = {
       sender: username,
-      receiver: contact,
+      receiver: contactUsername,
       message: message,
       time: getCurrentTime(),
     };

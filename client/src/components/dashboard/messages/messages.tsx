@@ -5,28 +5,27 @@ import { v4 as uuidv4 } from "uuid";
 
 export function Messages({ socket }: { socket: any }) {
   const username = useChatStore((state) => state.username);
-  const contact = useChatStore((state) => state.contact);
+  const contactUsername = useChatStore((state) => state.contactUsername);
   const messages = useChatStore((state) => state.messages);
   const setMessages = useChatStore((state) => state.setMessages);
   const addMessage = useChatStore((state) => state.addMessage);
   const containerRef = useRef<HTMLDivElement>(null);
-  socket.emit("join_room", { sender: username, receiver: contact });
+  socket.emit("join_room", { sender: username, receiver: contactUsername });
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getMessages(
           process.env.NEXT_PUBLIC_GET_MESSAGES!,
           username,
-          contact
+          contactUsername
         );
-        console.log(data);
         setMessages(data);
       } catch (error) {
         console.error(error);
       }
     };
     fetchData();
-  }, [username, contact]);
+  }, [username, contactUsername]);
 
   useEffect(() => {
     socket.on("receive_message", (data: Message) => {
@@ -45,8 +44,8 @@ export function Messages({ socket }: { socket: any }) {
           const sender = msg.sender;
           const receiver = msg.receiver;
           if (
-            (receiver === contact || receiver === username) &&
-            (sender === contact || sender === username)
+            (receiver === contactUsername || receiver === username) &&
+            (sender === contactUsername || sender === username)
           ) {
             if (sender === username) {
               return <MessageSelf key={uuidv4()} message={msg.message} />;

@@ -1,13 +1,11 @@
 import { create } from "zustand";
 import { Contact, Message, User } from "@/lib/utils";
 import decode from "jwt-decode";
-import axios from "axios";
 
 interface UserState {
   userInfo: User;
   token: string | null;
   setUserInfo: (d: User) => void;
-  setToken: (s: string) => void;
   logout: () => void;
 }
 
@@ -18,29 +16,30 @@ interface ChatState {
   contactUsername: string;
   messages: Message[];
   contacts: Contact[];
-  chatHistory: Message[];
   setContacts: (c: Contact[]) => void;
   addContact: (c: Contact) => void;
   setContactName: (s: string) => void;
   setContactUsername: (s: string) => void;
   setName: (s: string) => void;
+  setUsername: (s: string) => void;
   setMessages: (m: Message[]) => void;
   addMessage: (m: Message) => void;
 }
 
 const token = localStorage.getItem("token");
-let name = "";
-let username = "";
+let userInfo: User = {
+  first_name: "",
+  last_name: "",
+  username: "",
+  password: "",
+  token: "",
+  contacts: [{ name: "", username: "" }],
+};
 if (token) {
-  const decoded: { name: string; username: string } = decode(token);
-  name = decoded.name;
-  username = decoded.username;
+  const decoded: { user: User } = decode(token);
+  const user = decoded.user;
+  userInfo = user;
 }
-const res = await axios.post(process.env.NEXT_PUBLIC_GET_CHAT_DATA!, {
-  username,
-});
-let contactList: Contact[] = [];
-if (Array.isArray(res.data)) contactList = res.data;
 
 export const useUserStore = create<UserState>((set) => ({
   userInfo: {
@@ -53,7 +52,6 @@ export const useUserStore = create<UserState>((set) => ({
   },
   token: token,
   setUserInfo: (userData: User) => set({ userInfo: userData }),
-  setToken: (s: string) => set({ token: s }),
   logout: () => {
     set({ token: null });
     localStorage.removeItem("token");
@@ -61,14 +59,14 @@ export const useUserStore = create<UserState>((set) => ({
 }));
 
 export const useChatStore = create<ChatState>((set) => ({
-  name: name,
-  username: username,
-  contactName: "",
-  contactUsername: "",
+  name: userInfo.first_name,
+  username: userInfo.username,
+  contactName: userInfo.contacts[0].name,
+  contactUsername: userInfo.contacts[0].username,
+  contacts: userInfo.contacts,
   messages: [],
-  contacts: contactList,
-  chatHistory: [],
   setName: (s: string) => set({ name: s }),
+  setUsername: (s: string) => set({ username: s }),
   setContactName: (s: string) => set({ contactName: s }),
   setContactUsername: (s: string) => set({ contactUsername: s }),
   setContacts: (c: Contact[]) => set({ contacts: c.sort() }),

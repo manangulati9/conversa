@@ -19,15 +19,24 @@ function saveMessageToDB({ sender, receiver, message, time }) {
   });
 }
 
-function saveContact(username, contactUsername, contactName) {
+function saveContact(username, contactUsername) {
   return new Promise(async (res, rej) => {
     try {
       if (username && contactUsername) {
-        const docs = await User.find({ username: username });
-        docs.forEach((doc) => {
-          doc.contacts.push({ name: contactName, username: contactUsername });
-          doc.save();
-        });
+        const docs = await Promise.all([
+          User.findOne({ username: contactUsername }),
+          User.find({ username: username }),
+        ]);
+        if (docs[0] && docs[1]) {
+          const contactName = docs[0].first_name;
+          docs[1].forEach((doc) => {
+            doc.contacts.push({ name: contactName, username: contactUsername });
+            doc.save();
+          });
+          res(docs);
+        } else {
+          rej("User doesn't exist");
+        }
       }
     } catch (error) {
       rej(error);

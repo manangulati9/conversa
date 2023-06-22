@@ -32,17 +32,13 @@ router.post("/", async (req, res) => {
       last_name,
       username: username.toLowerCase(), // sanitize: convert username to lowercase
       password: encryptedPassword,
+      contacts: [],
     });
 
     // Create token
-    const name = first_name;
-    const token = jwt.sign(
-      { user_id: user._id, username, name },
-      process.env.TOKEN_KEY,
-      {
-        expiresIn: "24h",
-      }
-    );
+    const token = jwt.sign({ user_id: user._id, user }, process.env.TOKEN_KEY, {
+      expiresIn: "24h",
+    });
     // save user token
     user.token = token;
 

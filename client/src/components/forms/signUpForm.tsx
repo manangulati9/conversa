@@ -11,10 +11,12 @@ import { useChatStore, useUserStore } from "@/lib/stores";
 
 export default function () {
   const router = useRouter();
-  const setToken = useUserStore((state) => state.setToken);
-  const setUserInfo = useUserStore((state) => state.setUserInfo);
   const logout = useUserStore((state) => state.logout);
   const setName = useChatStore((state) => state.setName);
+  const setUsername = useChatStore((state) => state.setUsername);
+  const setContactName = useChatStore((state) => state.setContactName);
+  const setContactUsername = useChatStore((state) => state.setContactUsername);
+  const setContacts = useChatStore((state) => state.setContacts);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (e.target !== null) {
@@ -28,14 +30,16 @@ export default function () {
         };
         const res = await axios.post(process.env.NEXT_PUBLIC_REGISTER!, data);
         const user: User = res.data;
-        setUserInfo(user);
         localStorage.setItem("token", user.token);
-        setToken(user.token);
         setTimeout(() => {
           logout();
           localStorage.removeItem("token");
         }, 7200000);
         setName(user.first_name);
+        setUsername(user.username);
+        setContactName(user.contacts[0].name);
+        setContactUsername(user.contacts[0].username);
+        setContacts(user.contacts);
         router.push("/");
       } catch (error: any) {
         alert(error.response.data);
