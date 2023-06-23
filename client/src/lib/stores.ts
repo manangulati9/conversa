@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { Contact, Message, User } from "@/lib/utils";
 import decode from "jwt-decode";
+import { RefObject } from "react";
 
 interface UserState {
   userInfo: User;
@@ -16,6 +17,7 @@ interface ChatState {
   contactUsername: string;
   messages: Message[];
   contacts: Contact[];
+  msgDivRef: RefObject<HTMLDivElement> | null;
   setContacts: (c: Contact[]) => void;
   addContact: (c: Contact) => void;
   setContactName: (s: string) => void;
@@ -24,6 +26,7 @@ interface ChatState {
   setUsername: (s: string) => void;
   setMessages: (m: Message[]) => void;
   addMessage: (m: Message) => void;
+  setMsgDivRef: (d: RefObject<HTMLDivElement>) => void;
 }
 
 const token = localStorage.getItem("token");
@@ -65,6 +68,7 @@ export const useChatStore = create<ChatState>((set) => ({
   contactUsername: userInfo.contacts[0].username,
   contacts: userInfo.contacts,
   messages: [],
+  msgDivRef: null,
   setName: (s: string) => set({ name: s }),
   setUsername: (s: string) => set({ username: s }),
   setContactName: (s: string) => set({ contactName: s }),
@@ -75,4 +79,5 @@ export const useChatStore = create<ChatState>((set) => ({
   setMessages: (m: Message[]) => set({ messages: m.reverse() }),
   addMessage: (m: Message) =>
     set((state) => ({ messages: [m, ...state.messages] })),
+  setMsgDivRef: (d: RefObject<HTMLDivElement>) => set({ msgDivRef: d }),
 }));

@@ -1,5 +1,5 @@
-import { Avatar, AvatarFallback, AvatarImage } from "../../primitives/avatar";
 import { useChatStore } from "@/lib/stores";
+import Circle from "./avatar";
 
 export function MessageItem({
   name,
@@ -27,11 +27,8 @@ export function MessageItem({
       className="flex justify-between items-center w-full bg-background text-white p-3 hover:bg-[#1D2C4E] rounded-lg"
       onClick={handleClick}
     >
-      <div className="flex gap-4">
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+      <div className="flex gap-4 items-center">
+        <Circle letter={name[0]} bgColor="#0E49B5" />
         <div className="text-left">
           <p className="text-base">{name}</p>
           <p className="text-slate-400">{lastMessage}</p>

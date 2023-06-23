@@ -1,7 +1,7 @@
 import { useChatStore } from "@/lib/stores";
-import { Label } from "@/components/primitives/label";
-import { Input } from "@/components/primitives/input";
-import { Button } from "@/components/primitives/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { FormEvent, useRef } from "react";
 import {
   Dialog,
@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../../primitives/dialog";
+} from "../../ui/dialog";
 import Image from "next/image";
 import Edit from "../../../../public/edit.svg";
 

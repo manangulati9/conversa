@@ -10,9 +10,7 @@ export function Messages({ socket }: { socket: any }) {
   const setMessages = useChatStore((state) => state.setMessages);
   const addMessage = useChatStore((state) => state.addMessage);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  socket.emit("join_room", { sender: username, receiver: contactUsername });
-
+  const setmsgDivRef = useChatStore((state) => state.setMsgDivRef);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -27,6 +25,7 @@ export function Messages({ socket }: { socket: any }) {
       }
     };
     fetchData();
+    setmsgDivRef(containerRef);
   }, [username, contactUsername]);
 
   useEffect(() => {

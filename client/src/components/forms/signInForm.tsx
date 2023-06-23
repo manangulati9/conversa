@@ -1,7 +1,7 @@
 "use client";
-import { Input } from "../primitives/input";
-import { Button } from "../primitives/button";
-import { Label } from "../primitives/label";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { Label } from "../ui/label";
 import Link from "next/link";
 import { FormEvent } from "react";
 import { useRouter } from "next/navigation";

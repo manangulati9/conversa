@@ -1,4 +1,4 @@
-import { ScrollArea } from "../../primitives/scrollarea";
+import { ScrollArea } from "../../ui/scrollarea";
 import { useChatStore } from "@/lib/stores";
 import { v4 as uuidv4 } from "uuid";
 import { MessageItem } from "./messageItem";
@@ -19,7 +19,6 @@ export function ContactList({ socket }: { socket: any }) {
     if (toggleSearchBox && searchBoxRef.current) {
       searchBoxRef.current.focus();
     }
-    if (!toggleSearchBox) setContacts(contactList);
   }, [toggleSearchBox]);
   return (
     <div className="flex flex-col w-full grow bg-background text-white border-b-2 rounded-none border-slate-500 ">
@@ -50,11 +49,14 @@ export function ContactList({ socket }: { socket: any }) {
               ref={searchBoxRef}
               onChange={() => {
                 setContacts(
-                  contactList.filter((contact) =>
-                    contact.name
-                      .toLowerCase()
-                      .includes(searchBoxRef.current!.value)
-                  )
+                  contactList.filter((contact) => {
+                    const queryString = searchBoxRef.current?.value;
+                    if (queryString) {
+                      return contact.name.toLowerCase().includes(queryString);
+                    } else {
+                      return true;
+                    }
+                  })
                 );
               }}
             />
@@ -68,7 +70,6 @@ export function ContactList({ socket }: { socket: any }) {
             const msgs = messages.filter((msg) => {
               return msg.sender === contactUsername;
             });
-            console.log(msgs);
             const [lastEntry] = msgs;
             let lastMessage = "";
             let time = "";

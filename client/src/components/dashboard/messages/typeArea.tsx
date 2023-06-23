@@ -14,7 +14,7 @@ export function TypeArea({ socket }: { socket: any }) {
   const contactUsername = useChatStore((state) => state.contactUsername);
   return (
     <form onSubmit={(e) => handleSubmit(e, socket, username, contactUsername)}>
-      <footer className="flex w-full p-4 items-center gap-5 bg-[#090E1B]">
+      <footer className="flex w-full py-4 px-8 items-center gap-8 bg-[#090E1B]">
         <button>
           <Image src={Smiley} alt="" width={20} />
         </button>
@@ -26,14 +26,10 @@ export function TypeArea({ socket }: { socket: any }) {
           id="msg"
           autoComplete="off"
         />
-        <div className="flex gap-5">
-          <button>
-            <Image src={Mention} alt="" width={20} />
-          </button>
-          <button type="submit">
-            <Image src={Airplane} alt="" width={20} />
-          </button>
-        </div>
+
+        <button type="submit">
+          <Image src={Airplane} alt="" width={20} />
+        </button>
       </footer>
     </form>
   );

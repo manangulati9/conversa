@@ -36,9 +36,9 @@ io.on("connection", (socket) => {
     socket.join(room);
     const userCount = io.sockets.adapter.rooms.get(room).size;
     if (userCount === 1) {
-      socket.emit("chat_status", false);
+      io.to(room).emit("chat_status", false);
     } else if (userCount === 2) {
-      socket.emit("chat_status", true);
+      io.to(room).emit("chat_status", true);
     }
   });
   socket.on("send_message", (data) => {
@@ -59,11 +59,14 @@ io.on("connection", (socket) => {
     const { sender, receiver } = data;
     const room = generateRoomId(sender, receiver);
     socket.leave(room);
-    const userCount = io.sockets.adapter.rooms.get(room).size;
-    if (userCount === 1) {
-      socket.emit("chat_status", false);
-    } else if (userCount === 2) {
-      socket.emit("chat_status", true);
+    const socketRoom = io.sockets.adapter.rooms.get(room);
+    if (socketRoom) {
+      const userCount = socketRoom.size;
+      if (userCount === 1) {
+        io.to(room).emit("chat_status", false);
+      } else if (userCount === 2) {
+        io.to(room).emit("chat_status", true);
+      }
     }
   });
 });
