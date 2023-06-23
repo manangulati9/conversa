@@ -20,6 +20,11 @@ export function ContactList({ socket }: { socket: any }) {
       searchBoxRef.current.focus();
     }
   }, [toggleSearchBox]);
+
+  useEffect(() => {
+    setContacts(contactList);
+  }, [contactList]);
+
   return (
     <div className="flex flex-col w-full grow bg-background text-white border-b-2 rounded-none border-slate-500 ">
       <div>
@@ -40,30 +45,31 @@ export function ContactList({ socket }: { socket: any }) {
             <AddContact socket={socket} />
           </div>
         </div>
-        {toggleSearchBox && (
-          <div className="flex items-center border-2 rounded-full px-3">
-            <Search className="mr-2 h-4 w-4 shrink-0 opacity-80 text-white" />
-            <input
-              className="h-9 w-full bg-transparent p-3 text-sm border-0 placeholder:text-slate-400 focus:outline-none "
-              placeholder="Search a contact..."
-              ref={searchBoxRef}
-              onChange={() => {
-                setContacts(
-                  contactList.filter((contact) => {
-                    const queryString = searchBoxRef.current?.value;
-                    if (queryString) {
-                      return contact.name.toLowerCase().includes(queryString);
-                    } else {
-                      return true;
-                    }
-                  })
-                );
-              }}
-            />
-          </div>
-        )}
+        <div
+          className={`flex items-center border-2 rounded-full px-3 transition-opacity ${
+            toggleSearchBox ? "visible" : "hidden"
+          }`}
+        >
+          <Search className="mr-2 h-4 w-4 shrink-0 opacity-80 text-white" />
+          <input
+            className="h-9 w-full bg-transparent p-3 text-sm border-0 placeholder:text-slate-400 focus:outline-none "
+            placeholder="Search a contact..."
+            ref={searchBoxRef}
+            onChange={() => {
+              setContacts(
+                contactList.filter((contact) => {
+                  const queryString = searchBoxRef.current?.value;
+                  if (queryString) {
+                    return contact.name.toLowerCase().includes(queryString);
+                  } else {
+                    return true;
+                  }
+                })
+              );
+            }}
+          />
+        </div>
       </div>
-
       <ScrollArea className="py-3 border-slate-500">
         <div className="flex flex-col gap-6">
           {contacts.map((contact) => {

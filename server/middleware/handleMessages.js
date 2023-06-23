@@ -33,7 +33,7 @@ function saveContact(username, contactUsername) {
             doc.contacts.push({ name: contactName, username: contactUsername });
             doc.save();
           });
-          res(docs);
+          res(docs[1]);
         } else {
           rej("User doesn't exist");
         }
@@ -44,4 +44,23 @@ function saveContact(username, contactUsername) {
   });
 }
 
-module.exports = { saveMessageToDB, saveContact };
+function deleteContact(username, contactUsername) {
+  return new Promise(async (res, rej) => {
+    try {
+      if (username && contactUsername) {
+        const doc = await User.findOne({ username: username });
+        doc.contacts = doc.contacts.filter(
+          (contact) => contact.username !== contactUsername
+        );
+        doc.save();
+        res(doc);
+      } else {
+        rej("Invalid data");
+      }
+    } catch (error) {
+      rej(error);
+    }
+  });
+}
+
+module.exports = { saveMessageToDB, saveContact, deleteContact };

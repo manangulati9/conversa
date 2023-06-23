@@ -37,9 +37,11 @@ export default function () {
         }, 7200000);
         setName(user.first_name);
         setUsername(user.username);
-        setContactName(user.contacts[0].name);
-        setContactUsername(user.contacts[0].username);
-        setContacts(user.contacts);
+        setContactName(user.contacts.length === 0 ? "" : user.contacts[0].name);
+        setContactUsername(
+          user.contacts.length === 0 ? "" : user.contacts[0].username
+        );
+        setContacts(user.contacts.length === 0 ? [] : user.contacts);
         router.push("/");
       } catch (error: any) {
         alert(error.response.data);

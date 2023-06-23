@@ -9,7 +9,11 @@ const messages = require("./routes/messages");
 const cors = require("cors");
 const { Server } = require("socket.io");
 const http = require("http");
-const { saveMessageToDB, saveContact } = require("./middleware/handleMessages");
+const {
+  saveMessageToDB,
+  saveContact,
+  deleteContact,
+} = require("./middleware/handleMessages");
 const generateRoomId = require("./utils");
 const chatData = require("./routes/chat-data");
 
@@ -67,6 +71,14 @@ io.on("connection", (socket) => {
       } else if (userCount === 2) {
         io.to(room).emit("chat_status", true);
       }
+    }
+  });
+  socket.on("delete_contact", async (data) => {
+    try {
+      const { username, contactUsername } = data;
+      await deleteContact(username, contactUsername);
+    } catch (error) {
+      socket.emit("error", error);
     }
   });
 });

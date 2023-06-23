@@ -64,9 +64,10 @@ export const useUserStore = create<UserState>((set) => ({
 export const useChatStore = create<ChatState>((set) => ({
   name: userInfo.first_name,
   username: userInfo.username,
-  contactName: userInfo.contacts[0].name,
-  contactUsername: userInfo.contacts[0].username,
-  contacts: userInfo.contacts,
+  contactName: userInfo.contacts.length === 0 ? "" : userInfo.contacts[0].name,
+  contactUsername:
+    userInfo.contacts.length === 0 ? "" : userInfo.contacts[0].username,
+  contacts: userInfo.contacts.length === 0 ? [] : userInfo.contacts,
   messages: [],
   msgDivRef: null,
   setName: (s: string) => set({ name: s }),

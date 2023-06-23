@@ -24,7 +24,7 @@ export function MessageItem({
   };
   return (
     <button
-      className="flex justify-between items-center w-full bg-background text-white p-3 hover:bg-[#1D2C4E] rounded-lg"
+      className="flex justify-between items-center w-full bg-background transition-colors text-white p-3 hover:bg-[#1D2C4E] rounded-lg"
       onClick={handleClick}
     >
       <div className="flex gap-4 items-center">
