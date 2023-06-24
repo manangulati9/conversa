@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export default function ({ alertDialogRef }: { alertDialogRef: any }) {
+export default function () {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus-visible:outline-none">
@@ -19,7 +19,7 @@ export default function ({ alertDialogRef }: { alertDialogRef: any }) {
         <DropdownMenuItem>
           <button
             onClick={() => {
-              alertDialogRef.current?.click();
+              document.getElementById("alertDialogRef")?.click();
             }}
           >
             Delete contact

@@ -1,5 +1,5 @@
 import { ScrollArea } from "../../ui/scrollarea";
-import { useChatStore } from "@/lib/stores";
+import { useStore } from "@/lib/stores";
 import { v4 as uuidv4 } from "uuid";
 import { MessageItem } from "./messageItem";
 import { AddContact } from "./addContact";
@@ -9,12 +9,12 @@ import { useEffect, useRef, useState } from "react";
 import { Search } from "lucide-react";
 
 export function ContactList({ socket }: { socket: any }) {
-  const contactList = useChatStore((state) => state.contacts);
+  const contactList = useStore((state) => state.contacts);
   const [contacts, setContacts] = useState(contactList);
   const [toggleSearchBox, setToggle] = useState(false);
   const searchBoxRef = useRef<HTMLInputElement>(null);
-  const messages = useChatStore((state) => state.messages);
-  const contactUsername = useChatStore((state) => state.contactUsername);
+  const messages = useStore((state) => state.messages);
+  const contactUsername = useStore((state) => state.contactUsername);
   useEffect(() => {
     if (toggleSearchBox && searchBoxRef.current) {
       searchBoxRef.current.focus();

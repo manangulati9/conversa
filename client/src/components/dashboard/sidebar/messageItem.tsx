@@ -1,4 +1,4 @@
-import { useChatStore } from "@/lib/stores";
+import { useStore } from "@/lib/stores";
 import Circle from "./avatar";
 
 export function MessageItem({
@@ -14,8 +14,8 @@ export function MessageItem({
   time?: string;
   socket: any;
 }) {
-  const sender = useChatStore((state) => state.username);
-  const setContactName = useChatStore((state) => state.setContactName);
+  const sender = useStore((state) => state.username);
+  const setContactName = useStore((state) => state.setContactName);
   const handleClick = () => {
     if (sender && username) {
       setContactName(name);

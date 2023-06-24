@@ -1,12 +1,11 @@
-import { useChatStore, useUserStore } from "@/lib/stores";
+import { useStore } from "@/lib/stores";
 import { useRouter } from "next/navigation";
 import Circle from "./avatar";
 
 export function Profile({ socket }: { socket: any }) {
-  const name = useChatStore((state) => state.name);
-  const logout = useUserStore((state) => state.logout);
-  const username = useChatStore((state) => state.username);
-  const contactUsername = useChatStore((state) => state.contactUsername);
+  const name = useStore((state) => state.name);
+  const username = useStore((state) => state.username);
+  const contactUsername = useStore((state) => state.contactUsername);
   const router = useRouter();
   return (
     <div className="flex gap-5 items-center w-full">
@@ -16,11 +15,11 @@ export function Profile({ socket }: { socket: any }) {
         <button
           className="text-slate-400 hover:underline"
           onClick={() => {
-            logout();
             socket.emit("leave_room", {
               sender: username,
               receiver: contactUsername,
             });
+            localStorage.removeItem("token");
             router.push("/login");
           }}
         >

@@ -1,4 +1,4 @@
-import { useChatStore } from "@/lib/stores";
+import { useStore } from "@/lib/stores";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import {
 } from "../../ui/dialog";
 import Image from "next/image";
 import Edit from "../../../../public/edit.svg";
+import { Contact } from "@/lib/utils";
 
 interface ContactForm extends HTMLFormControlsCollection {
   contact_username: HTMLInputElement;
@@ -20,11 +21,17 @@ export function AddContact({ socket }: { socket: any }) {
   socket.on("error", (error: string) => {
     alert(error);
   });
+  socket.on("contact_added", (data: Contact[]) => {
+    setContacts(data);
+    setContactName(data[0].name);
+    setContactUsername(data[0].username);
+  });
   const formRef = useRef<HTMLFormElement>(null);
-  const username = useChatStore((state) => state.username);
+  const { username, setContacts, setContactName, setContactUsername } =
+    useStore();
   return (
     <Dialog>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild id="dialog-trigger">
         <button>
           <Image
             src={Edit}
@@ -50,6 +57,7 @@ export function AddContact({ socket }: { socket: any }) {
               username: username,
               contactUsername: contactUsername,
             });
+            document.getElementById("dialog-trigger")?.click();
           }}
         >
           <Label htmlFor="contact_username">Username</Label>

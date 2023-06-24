@@ -1,16 +1,16 @@
-import { useChatStore } from "@/lib/stores";
-import { Message, getMessages } from "@/lib/utils";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { useStore } from "@/lib/stores";
+import { Message, getMessages } from "@/lib/utils";
 
-export function Messages({ socket }: { socket: any }) {
-  const username = useChatStore((state) => state.username);
-  const contactUsername = useChatStore((state) => state.contactUsername);
-  const messages = useChatStore((state) => state.messages);
-  const setMessages = useChatStore((state) => state.setMessages);
-  const addMessage = useChatStore((state) => state.addMessage);
+const Messages = React.memo(({ socket }: { socket: any }) => {
+  const username = useStore((state) => state.username);
+  const contactUsername = useStore((state) => state.contactUsername);
+  const messages = useStore((state) => state.messages);
+  const setMessages = useStore((state) => state.setMessages);
+  const addMessage = useStore((state) => state.addMessage);
   const containerRef = useRef<HTMLDivElement>(null);
-  const setmsgDivRef = useChatStore((state) => state.setMsgDivRef);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -25,7 +25,6 @@ export function Messages({ socket }: { socket: any }) {
       }
     };
     fetchData();
-    setmsgDivRef(containerRef);
   }, [username, contactUsername]);
 
   useEffect(() => {
@@ -59,7 +58,8 @@ export function Messages({ socket }: { socket: any }) {
         })}
     </div>
   );
-}
+});
+
 function MessageBubble({ message, type }: { message: Message; type: string }) {
   return (
     <div className={`${type} bubble w-fit flex gap-3`}>
@@ -74,3 +74,5 @@ function MessageBubble({ message, type }: { message: Message; type: string }) {
     </div>
   );
 }
+
+export default Messages;

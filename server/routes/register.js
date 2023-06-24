@@ -28,17 +28,20 @@ router.post("/", async (req, res) => {
 
     // Create user in our database
     const user = await User.create({
-      first_name,
-      last_name,
-      username: username.toLowerCase(), // sanitize: convert username to lowercase
+      name: first_name + " " + last_name,
+      username: username, // sanitize: convert username to lowercase
       password: encryptedPassword,
       contacts: [],
     });
 
     // Create token
-    const token = jwt.sign({ user_id: user._id, user }, process.env.TOKEN_KEY, {
-      expiresIn: "24h",
-    });
+    const token = jwt.sign(
+      { user_id: user._id, username },
+      process.env.TOKEN_KEY,
+      {
+        expiresIn: "24h",
+      }
+    );
     // save user token
     user.token = token;
 

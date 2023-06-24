@@ -10,15 +10,14 @@ import {
 import { Search } from "lucide-react";
 import { Message } from "@/lib/utils";
 import { v4 as uuidv4 } from "uuid";
-import { useChatStore } from "@/lib/stores";
+import { useStore } from "@/lib/stores";
 import { useState, useRef } from "react";
 import Image from "next/image";
 
 export default function MessageSearch() {
-  const messageStore = useChatStore((state) => state.messages);
+  const messageStore = useStore((state) => state.messages);
   const [messages, setMessages] = useState<Message[]>([]);
   const searchRef = useRef<HTMLInputElement>(null);
-  const msgDivRef = useChatStore((state) => state.msgDivRef);
   const searchButtonRef = useRef<HTMLDivElement>(null);
   return (
     <Sheet>
@@ -67,8 +66,7 @@ export default function MessageSearch() {
                 key={uuidv4()}
                 className="flex w-full justify-between py-3 px-5 bg-[#1D2C4E] rounded-lg m-3 items-center"
                 onClick={() => {
-                  const messages =
-                    msgDivRef?.current?.getElementsByClassName("bubble");
+                  const messages = document.getElementsByClassName("bubble");
                   const queryString = searchRef.current?.value;
 
                   if (messages && queryString) {

@@ -1,5 +1,5 @@
-import { useChatStore } from "@/lib/stores";
-import { useEffect, useRef, useState } from "react";
+import { useStore } from "@/lib/stores";
+import { useEffect, useState } from "react";
 import Circle from "../sidebar/avatar";
 import MessageSearch from "./messageSearch";
 import DropDownMenu from "./dropDownMenu";
@@ -17,12 +17,16 @@ import {
 
 export default function ({ socket }: { socket: any }) {
   const [chatStatus, setChatStatus] = useState("");
-  const contactName = useChatStore((state) => state.contactName);
-  const contactUserName = useChatStore((state) => state.contactUsername);
-  const setContact = useChatStore((state) => state.setContacts);
-  const contacts = useChatStore((state) => state.contacts);
-  const username = useChatStore((state) => state.username);
-  const alertDialogRef = useRef<HTMLButtonElement>(null);
+  const {
+    contactName,
+    contactUsername,
+    setContacts,
+    contacts,
+    username,
+    setContactName,
+    setContactUsername,
+  } = useStore();
+
   useEffect(() => {
     socket.on("chat_status", (value: boolean) => {
       if (value) {
@@ -44,9 +48,9 @@ export default function ({ socket }: { socket: any }) {
       </div>
       <div className="flex gap-4 w-fit">
         <MessageSearch />
-        <DropDownMenu alertDialogRef={alertDialogRef} />
+        <DropDownMenu />
         <AlertDialog>
-          <AlertDialogTrigger ref={alertDialogRef}></AlertDialogTrigger>
+          <AlertDialogTrigger id="alertDialogRef"></AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>
@@ -60,15 +64,17 @@ export default function ({ socket }: { socket: any }) {
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => {
-                  setContact(
+                  setContacts(
                     contacts.filter(
-                      (contact) => contact.username !== contactUserName
+                      (contact) => contact.username !== contactUsername
                     )
                   );
                   socket.emit("delete_contact", {
                     username: username,
-                    contactUsername: contactUserName,
+                    contactUsername: contactUsername,
                   });
+                  setContactUsername("");
+                  setContactName("");
                 }}
               >
                 Continue

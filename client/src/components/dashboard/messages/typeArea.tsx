@@ -1,17 +1,15 @@
 import Image from "next/image";
 import Smiley from "../../../../public/smiley.svg";
-import Mention from "../../../../public/mention.svg";
 import Airplane from "../../../../public/paper-airplane.svg";
 import { FormEvent } from "react";
-import { useChatStore } from "@/lib/stores";
-import { getCurrentTime } from "@/lib/utils";
+import { useStore } from "@/lib/stores";
 
 interface MessageForm extends HTMLFormControlsCollection {
   msg: HTMLInputElement;
 }
 export function TypeArea({ socket }: { socket: any }) {
-  const username = useChatStore((state) => state.username);
-  const contactUsername = useChatStore((state) => state.contactUsername);
+  const username = useStore((state) => state.username);
+  const contactUsername = useStore((state) => state.contactUsername);
   return (
     <form onSubmit={(e) => handleSubmit(e, socket, username, contactUsername)}>
       <footer className="flex w-full py-4 px-8 items-center gap-8 bg-[#090E1B]">
@@ -49,7 +47,6 @@ function handleSubmit(
       sender: username,
       receiver: contactUsername,
       message: message,
-      time: getCurrentTime(),
     };
     if (message) socket.emit("send_message", data);
     e.currentTarget.reset();
