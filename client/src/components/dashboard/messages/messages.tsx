@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useStore } from "@/lib/stores";
 import {
@@ -23,11 +23,7 @@ const Messages = React.memo(({ socket }: { socket: any }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getMessages(
-          process.env.NEXT_PUBLIC_GET_MESSAGES!,
-          username,
-          contactUsername
-        );
+        const data = await getMessages(username, contactUsername);
         setMessages(data);
       } catch (error) {
         console.error(error);
@@ -41,6 +37,10 @@ const Messages = React.memo(({ socket }: { socket: any }) => {
       addMessage(data);
     });
   }, [socket]);
+
+  useEffect(() => {
+    console.log(messages.length);
+  }, [messages.length]);
 
   return (
     <>

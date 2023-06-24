@@ -19,7 +19,6 @@ export function Profile({ socket }: { socket: any }) {
               sender: username,
               receiver: contactUsername,
             });
-            localStorage.removeItem("token");
           }}
         >
           Logout

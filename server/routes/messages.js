@@ -6,7 +6,12 @@ router.post("/", async (req, res) => {
   try {
     const { client1, client2 } = req.body;
     const messages = await Message.find(
-      { sender: { $in: [client1, client2] } },
+      {
+        $or: [
+          { sender: client1, receiver: client2 },
+          { sender: client2, receiver: client1 },
+        ],
+      },
       "message sender receiver time"
     );
     res.status(200).json(messages);

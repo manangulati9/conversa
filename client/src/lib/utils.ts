@@ -10,6 +10,7 @@ export interface FormElements extends HTMLFormControlsCollection {
   pwd: HTMLInputElement;
   fname: HTMLInputElement;
   lname: HTMLInputElement;
+  confirmPwd: HTMLInputElement;
 }
 
 export interface User {
@@ -32,12 +33,11 @@ export interface Contact {
   username: string;
 }
 
-export async function getMessages(
-  url: string,
-  client1: string,
-  client2: string
-) {
-  const res = await axios.post(url, { client1: client1, client2: client2 });
+export async function getMessages(client1: string, client2: string) {
+  const res = await axios.post(process.env.NEXT_PUBLIC_GET_MESSAGES!, {
+    client1: client1,
+    client2: client2,
+  });
   return res.data;
 }
 

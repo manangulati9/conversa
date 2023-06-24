@@ -3,15 +3,17 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import Link from "next/link";
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FormElements, User } from "../../lib/utils";
 import axios from "axios";
 import { useStore } from "@/lib/stores";
+import { Checkbox } from "../ui/checkbox";
 
 export default function () {
   const router = useRouter();
   const { initStates } = useStore();
+  const [inputType, setInputType] = useState("password");
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (e.target !== null) {
@@ -43,10 +45,11 @@ export default function () {
         <Input type="text" id="username" name="username" required />
         <p className="text-sm text-muted-foreground">Enter your username</p>
       </div>
+
       <div className="grid w-full max-w-sm items-center gap-1.5">
         <Label htmlFor="pwd">Password</Label>
         <Input
-          type="password"
+          type={inputType}
           id="pwd"
           name="pwd"
           required
@@ -54,6 +57,15 @@ export default function () {
           maxLength={20}
         />
         <p className="text-sm text-muted-foreground">Enter your password</p>
+      </div>
+      <div className="flex gap-4 items-center  w-full ">
+        <Checkbox
+          name="pwd-checkbox"
+          onClick={() => {
+            setInputType(inputType === "password" ? "text" : "password");
+          }}
+        />
+        <Label htmlFor="pwd-checkbox">Show password</Label>
       </div>
       <Button type="submit" className="w-fit">
         Sign in

@@ -12,7 +12,7 @@ export default function Home() {
         <Image src={illus1} alt="" width={325} height={325} loading="eager" />
         <Image src={illus2} alt="" width={225} height={225} loading="eager" />
       </div>
-      <div className="flex flex-col justify-center items-center gap-20">
+      <div className="flex flex-col justify-center items-center gap-12">
         <Image src={Logo} priority alt="" />
         <SignUpForm />
       </div>

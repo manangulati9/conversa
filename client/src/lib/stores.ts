@@ -65,5 +65,6 @@ export const useStore = create<StoreType>((set) => ({
       contactUsername: "",
       messages: [],
     });
+    localStorage.removeItem("token");
   },
 }));
