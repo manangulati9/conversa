@@ -17,23 +17,10 @@ import {
 
 export default function ({ socket }: { socket: any }) {
   const [chatStatus, setChatStatus] = useState("");
-  const {
-    contactName,
-    contactUsername,
-    setContacts,
-    contacts,
-    username,
-    setContactName,
-    setContactUsername,
-  } = useStore();
-
+  const { contactName } = useStore();
   useEffect(() => {
     socket.on("chat_status", (value: boolean) => {
-      if (value) {
-        setChatStatus("online");
-      } else {
-        setChatStatus("offline");
-      }
+      setChatStatus(value ? "online" : "offline");
     });
   }, [socket]);
 
@@ -49,40 +36,94 @@ export default function ({ socket }: { socket: any }) {
       <div className="flex gap-4 w-fit">
         <MessageSearch />
         <DropDownMenu />
-        <AlertDialog>
-          <AlertDialogTrigger id="alertDialogRef"></AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                Delete {contactName} from contacts?
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => {
-                  setContacts(
-                    contacts.filter(
-                      (contact) => contact.username !== contactUsername
-                    )
-                  );
-                  socket.emit("delete_contact", {
-                    username: username,
-                    contactUsername: contactUsername,
-                  });
-                  setContactUsername("");
-                  setContactName("");
-                }}
-              >
-                Continue
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <DeleteContact socket={socket} />
+        <DeleteMessages socket={socket} />
       </div>
     </header>
+  );
+}
+
+function DeleteContact({ socket }: { socket: any }) {
+  const {
+    contactName,
+    contactUsername,
+    setContacts,
+    contacts,
+    username,
+    setContactName,
+    setContactUsername,
+  } = useStore();
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger id="del_contact"></AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>
+            Delete {contactName} from contacts?
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => {
+              setContacts(
+                contacts.filter(
+                  (contact) => contact.username !== contactUsername
+                )
+              );
+
+              if (contacts.length !== 0) {
+                setContactUsername(contacts[0].username);
+                setContactName(contacts[0].username);
+              }
+
+              socket.emit("delete_contact", {
+                username: username,
+                contactUsername: contactUsername,
+              });
+            }}
+          >
+            Continue
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
+function DeleteMessages({ socket }: { socket: any }) {
+  const { contactName, contactUsername, username, setMessages } = useStore();
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger id="del_msgs"></AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>
+            Delete all chats from {contactName}?
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => {
+              setMessages([]);
+              socket.emit("delete_chats_all", {
+                username: username,
+                contactUsername: contactUsername,
+              });
+            }}
+          >
+            Continue
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

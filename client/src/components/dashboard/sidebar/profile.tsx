@@ -1,12 +1,10 @@
 import { useStore } from "@/lib/stores";
-import { useRouter } from "next/navigation";
 import Circle from "./avatar";
+import { useRouter } from "next/navigation";
 
 export function Profile({ socket }: { socket: any }) {
-  const name = useStore((state) => state.name);
-  const username = useStore((state) => state.username);
-  const contactUsername = useStore((state) => state.contactUsername);
   const router = useRouter();
+  const { name, username, contactUsername, logout } = useStore();
   return (
     <div className="flex gap-5 items-center w-full">
       <Circle letter={name[0]} bgColor="#54E346" />
@@ -15,12 +13,13 @@ export function Profile({ socket }: { socket: any }) {
         <button
           className="text-slate-400 hover:underline"
           onClick={() => {
+            router.push("/login");
+            logout();
             socket.emit("leave_room", {
               sender: username,
               receiver: contactUsername,
             });
             localStorage.removeItem("token");
-            router.push("/login");
           }}
         >
           Logout

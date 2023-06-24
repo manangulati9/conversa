@@ -3,6 +3,7 @@ import Smiley from "../../../../public/smiley.svg";
 import Airplane from "../../../../public/paper-airplane.svg";
 import { FormEvent } from "react";
 import { useStore } from "@/lib/stores";
+import { getCurrentDate, getCurrentTime } from "@/lib/utils";
 
 interface MessageForm extends HTMLFormControlsCollection {
   msg: HTMLInputElement;
@@ -47,6 +48,8 @@ function handleSubmit(
       sender: username,
       receiver: contactUsername,
       message: message,
+      date: getCurrentDate(),
+      time: getCurrentTime(),
     };
     if (message) socket.emit("send_message", data);
     e.currentTarget.reset();

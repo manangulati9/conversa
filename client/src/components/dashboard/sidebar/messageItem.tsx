@@ -3,24 +3,20 @@ import Circle from "./avatar";
 
 export function MessageItem({
   name,
-  username,
+  contactUsername,
   lastMessage,
   time,
   socket,
 }: {
   name: string;
-  username: string;
+  contactUsername: string;
   lastMessage?: string;
   time?: string;
   socket: any;
 }) {
-  const sender = useStore((state) => state.username);
-  const setContactName = useStore((state) => state.setContactName);
+  const { username } = useStore();
   const handleClick = () => {
-    if (sender && username) {
-      setContactName(name);
-      socket.emit("join_room", { sender: sender, receiver: username });
-    }
+    socket.emit("join_room", { sender: username, receiver: contactUsername });
   };
   return (
     <button

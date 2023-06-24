@@ -18,9 +18,6 @@ interface ContactForm extends HTMLFormControlsCollection {
   contact_username: HTMLInputElement;
 }
 export function AddContact({ socket }: { socket: any }) {
-  socket.on("error", (error: string) => {
-    alert(error);
-  });
   socket.on("contact_added", (data: Contact[]) => {
     setContacts(data);
     setContactName(data[0].name);

@@ -2,24 +2,18 @@ const Message = require("../models/message");
 const User = require("../models/user");
 const { getCurrentTime } = require("./utils");
 
-async function saveMessageToDB({ sender, receiver, message }) {
+async function saveMessageToDB({ sender, receiver, message, date, time }) {
   try {
-    if (!sender || !receiver || !message) {
+    if (!sender || !receiver || !message || !date || !time) {
       throw new Error("Invalid data");
     }
-
-    const currentDate = new Date();
-    const day = currentDate.getDate();
-    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-    const year = currentDate.getFullYear();
-    const formattedDate = `${day}/${month}/${year}`;
 
     const newMessage = await Message.create({
       sender: sender,
       receiver: receiver,
       message: message,
-      date: formattedDate,
-      time: getCurrentTime(),
+      date: date,
+      time: time,
     });
 
     return newMessage;
@@ -101,4 +95,24 @@ async function deleteContact(username, contactUsername) {
   }
 }
 
-module.exports = { saveMessageToDB, saveContact, deleteContact };
+async function deleteAllChats(username, contactUsername) {
+  if (username && contactUsername) {
+    const query = {
+      $or: [
+        { sender: username, receiver: contactUsername },
+        { sender: contactUsername, receiver: username },
+      ],
+    };
+    await Message.deleteMany(query);
+    return "Messages deleted";
+  } else {
+    throw new Error("Invalid data");
+  }
+}
+
+module.exports = {
+  saveMessageToDB,
+  saveContact,
+  deleteContact,
+  deleteAllChats,
+};

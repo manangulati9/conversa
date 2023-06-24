@@ -24,6 +24,7 @@ export interface Message {
   receiver: string;
   message: string;
   time: string;
+  date: string;
 }
 
 export interface Contact {
@@ -45,4 +46,20 @@ export async function getUserData(username: string) {
     username: username,
   });
   return res.data;
+}
+
+export function getCurrentDate() {
+  const currentDate = new Date();
+  const day = currentDate.getDate();
+  const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+  const year = currentDate.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+export function getCurrentTime() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const currentTime = hours + ":" + minutes;
+  return currentTime;
 }

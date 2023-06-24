@@ -13,6 +13,7 @@ const {
   saveMessageToDB,
   saveContact,
   deleteContact,
+  deleteAllChats,
 } = require("./middleware/handle-data");
 const { generateRoomId } = require("./middleware/utils");
 const userData = require("./routes/user-data");
@@ -42,11 +43,11 @@ io.on("connection", (socket) => {
     io.to(room).emit("chat_status", userCount === 2);
   });
 
-  socket.on("send_message", (data) => {
+  socket.on("send_message", async (data) => {
     const { sender, receiver } = data;
     const room = generateRoomId(sender, receiver);
     io.in(room).emit("receive_message", data);
-    saveMessageToDB(data);
+    await saveMessageToDB(data);
   });
 
   socket.on("add_contact", async ({ username, contactUsername }) => {
@@ -71,6 +72,14 @@ io.on("connection", (socket) => {
   socket.on("delete_contact", async ({ username, contactUsername }) => {
     try {
       await deleteContact(username, contactUsername);
+    } catch (error) {
+      socket.emit("error", error);
+    }
+  });
+
+  socket.on("delete_chats_all", async ({ username, contactUsername }) => {
+    try {
+      await deleteAllChats(username, contactUsername);
     } catch (error) {
       socket.emit("error", error);
     }

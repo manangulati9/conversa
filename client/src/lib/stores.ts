@@ -21,6 +21,7 @@ interface StoreType {
   setUsername: (s: string) => void;
   setMessages: (m: Message[]) => void;
   addMessage: (m: Message) => void;
+  logout: () => void;
 }
 
 export const useStore = create<StoreType>((set) => ({
@@ -55,4 +56,14 @@ export const useStore = create<StoreType>((set) => ({
   setMessages: (m: Message[]) => set({ messages: m.reverse() }),
   addMessage: (m: Message) =>
     set((state) => ({ messages: [m, ...state.messages] })),
+  logout: () => {
+    set({
+      name: "",
+      username: "",
+      contacts: [],
+      contactName: "",
+      contactUsername: "",
+      messages: [],
+    });
+  },
 }));

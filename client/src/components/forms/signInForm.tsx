@@ -25,10 +25,6 @@ export default function () {
         const user: User = res.data;
         localStorage.setItem("token", user.token);
         initStates(user);
-        console.log("Set states at login page");
-        setTimeout(() => {
-          localStorage.removeItem("token");
-        }, 7200000);
         router.push("/");
       } catch (error: any) {
         alert(error.response.data);

@@ -6,8 +6,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useStore } from "@/lib/stores";
 
 export default function () {
+  const { messages } = useStore();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus-visible:outline-none">
@@ -19,12 +21,23 @@ export default function () {
         <DropdownMenuItem>
           <button
             onClick={() => {
-              document.getElementById("alertDialogRef")?.click();
+              document.getElementById("del_contact")?.click();
             }}
           >
             Delete contact
           </button>
         </DropdownMenuItem>
+        {messages.length !== 0 && (
+          <DropdownMenuItem>
+            <button
+              onClick={() => {
+                document.getElementById("del_msgs")?.click();
+              }}
+            >
+              Delete all chats
+            </button>
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
