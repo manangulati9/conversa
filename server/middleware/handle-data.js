@@ -49,14 +49,16 @@ async function saveContact(username, contactUsername) {
       throw new Error("Contact already exists");
     }
 
-    user.contacts.push({
+    const newContact = {
       name: contact.name,
       username: contactUsername,
-    });
+    };
+
+    user.contacts.push(newContact);
 
     await user.save();
 
-    return user.contacts;
+    return newContact;
   } catch (error) {
     throw error;
   }

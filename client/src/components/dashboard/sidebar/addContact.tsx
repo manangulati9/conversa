@@ -2,7 +2,7 @@ import { useStore } from "@/lib/stores";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FormEvent, useRef } from "react";
+import { FormEvent, useEffect, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,15 +17,17 @@ import { Contact } from "@/lib/utils";
 interface ContactForm extends HTMLFormControlsCollection {
   contact_username: HTMLInputElement;
 }
+
 export function AddContact({ socket }: { socket: any }) {
-  socket.on("contact_added", (data: Contact[]) => {
-    setContacts(data);
-    setContactName(data[0].name);
-    setContactUsername(data[0].username);
-  });
   const formRef = useRef<HTMLFormElement>(null);
-  const { username, setContacts, setContactName, setContactUsername } =
-    useStore();
+  const { username, addContact, contacts } = useStore();
+
+  useEffect(() => {
+    socket.on("contact_added", (contact: Contact) => {
+      addContact(contact);
+    });
+  }, [socket]);
+
   return (
     <Dialog>
       <DialogTrigger asChild id="dialog-trigger">

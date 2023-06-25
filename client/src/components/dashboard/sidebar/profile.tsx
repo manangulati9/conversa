@@ -16,8 +16,8 @@ export function Profile({ socket }: { socket: any }) {
             router.push("/login");
             logout();
             socket.emit("leave_room", {
-              sender: username,
-              receiver: contactUsername,
+              username: username,
+              contact: contactUsername,
             });
           }}
         >

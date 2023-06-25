@@ -8,12 +8,14 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import noData from "../../../../public/no_data.svg";
+import { ChatInfo } from "@/lib/utils";
 
 export function ContactList({ socket }: { socket: any }) {
-  const { contacts, messages, contactUsername } = useStore();
-  const [chats, setChats] = useState(contacts);
+  const { contacts, messages } = useStore();
   const [toggleSearchBox, setToggle] = useState(false);
   const searchBoxRef = useRef<HTMLInputElement>(null);
+  const [list, setList] = useState<ChatInfo[]>(contacts);
+
   useEffect(() => {
     if (toggleSearchBox && searchBoxRef.current) {
       searchBoxRef.current.focus();
@@ -21,7 +23,7 @@ export function ContactList({ socket }: { socket: any }) {
   }, [toggleSearchBox]);
 
   useEffect(() => {
-    setChats(contacts);
+    setList(contacts);
   }, [contacts]);
 
   return (
@@ -55,11 +57,13 @@ export function ContactList({ socket }: { socket: any }) {
             placeholder="Search a contact..."
             ref={searchBoxRef}
             onChange={() => {
-              setChats(
+              setList(
                 contacts.filter((contact) => {
-                  const queryString = searchBoxRef.current?.value;
+                  const queryString = searchBoxRef.current?.value.toLowerCase();
                   if (queryString) {
-                    return contact.name.toLowerCase().includes(queryString);
+                    return contact.contactInfo.name
+                      .toLowerCase()
+                      .includes(queryString);
                   } else {
                     return true;
                   }
@@ -68,7 +72,7 @@ export function ContactList({ socket }: { socket: any }) {
             }}
             onBlur={(e) => {
               setToggle(!toggleSearchBox);
-              setChats(contacts);
+              setList(contacts);
               e.target.value = "";
             }}
           />
@@ -77,16 +81,18 @@ export function ContactList({ socket }: { socket: any }) {
       {contacts.length !== 0 ? (
         <ScrollArea className="py-3 border-slate-500">
           <div className="flex flex-col gap-6">
-            {chats.length !== 0 ? (
-              chats.map((contact) => {
-                const msgs = messages.filter((msg) => {
-                  return msg.sender === contactUsername;
-                });
+            {list.length !== 0 ? (
+              list.map((contact) => {
+                const msgs = messages()
+                  .filter((msg) => {
+                    return msg.sender === contact.contactInfo.username;
+                  })
+                  .reverse();
                 const [lastMessage] = msgs;
                 return (
                   <MessageItem
-                    name={contact.name}
-                    contactUsername={contact.username}
+                    name={contact.contactInfo.name}
+                    contactUsername={contact.contactInfo.username}
                     socket={socket}
                     lastMessage={lastMessage ? lastMessage.message : ""}
                     time={lastMessage ? lastMessage.time : ""}

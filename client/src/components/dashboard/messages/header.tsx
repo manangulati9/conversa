@@ -18,6 +18,7 @@ import {
 export default function ({ socket }: { socket: any }) {
   const [chatStatus, setChatStatus] = useState("");
   const { contactName } = useStore();
+
   useEffect(() => {
     socket.on("chat_status", (value: boolean) => {
       setChatStatus(value ? "online" : "offline");
@@ -47,9 +48,9 @@ function DeleteContact({ socket }: { socket: any }) {
   const {
     contactName,
     contactUsername,
-    setContacts,
     contacts,
     username,
+    deleteContact,
     setContactName,
     setContactUsername,
   } = useStore();
@@ -70,15 +71,14 @@ function DeleteContact({ socket }: { socket: any }) {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
-              setContacts(
-                contacts.filter(
-                  (contact) => contact.username !== contactUsername
-                )
-              );
-
+              const currentContact = {
+                name: contactName,
+                username: contactUsername,
+              };
+              deleteContact(currentContact);
               if (contacts.length !== 0) {
-                setContactUsername(contacts[0].username);
-                setContactName(contacts[0].username);
+                setContactUsername(contacts[0].contactInfo.username);
+                setContactName(contacts[0].contactInfo.name);
               }
 
               socket.emit("delete_contact", {
@@ -96,7 +96,8 @@ function DeleteContact({ socket }: { socket: any }) {
 }
 
 function DeleteMessages({ socket }: { socket: any }) {
-  const { contactName, contactUsername, username, setMessages } = useStore();
+  const { contactName, contactUsername, username, deleteAllMessages } =
+    useStore();
   return (
     <AlertDialog>
       <AlertDialogTrigger id="del_msgs"></AlertDialogTrigger>
@@ -113,7 +114,10 @@ function DeleteMessages({ socket }: { socket: any }) {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
-              setMessages([]);
+              deleteAllMessages({
+                name: contactName,
+                username: contactUsername,
+              });
               socket.emit("delete_chats_all", {
                 username: username,
                 contactUsername: contactUsername,

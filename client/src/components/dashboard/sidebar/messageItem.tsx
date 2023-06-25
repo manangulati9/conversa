@@ -16,9 +16,11 @@ export function MessageItem({
 }) {
   const { username, setContactName, setContactUsername } = useStore();
   const handleClick = () => {
-    socket.emit("join_room", { sender: username, receiver: contactUsername });
-    setContactName(name);
-    setContactUsername(contactUsername);
+    if (contactUsername !== "" && username !== "") {
+      socket.emit("join_room", { sender: username, receiver: contactUsername });
+      setContactName(name);
+      setContactUsername(contactUsername);
+    }
   };
   return (
     <button

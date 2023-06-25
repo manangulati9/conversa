@@ -46,21 +46,22 @@ io.on("connection", (socket) => {
   socket.on("send_message", async (data) => {
     const { sender, receiver } = data;
     const room = generateRoomId(sender, receiver);
-    io.in(room).emit("receive_message", data);
+    io.to(room).emit("receive_message", data);
     await saveMessageToDB(data);
   });
 
   socket.on("add_contact", async ({ username, contactUsername }) => {
     try {
-      const res = await saveContact(username, contactUsername);
-      socket.emit(Array.isArray(res) ? "contact_added" : "error", res);
+      const newContact = await saveContact(username, contactUsername);
+      socket.emit("contact_added", newContact);
     } catch (error) {
       socket.emit("error", error);
+      console.error(error);
     }
   });
 
-  socket.on("leave_room", ({ sender, receiver }) => {
-    const room = generateRoomId(sender, receiver);
+  socket.on("leave_room", ({ username, contact }) => {
+    const room = generateRoomId(username, contact);
     socket.leave(room);
     const socketRoom = io.sockets.adapter.rooms.get(room);
     if (socketRoom) {

@@ -14,11 +14,13 @@ const poppins = Poppins({
 
 export default function ({ socket }: { socket: any }) {
   const { username, contactUsername, contacts } = useStore();
-  socket.emit("join_room", { sender: username, receiver: contactUsername });
+  if (username !== "" && contactUsername !== "") {
+    socket.emit("join_room", { sender: username, receiver: contactUsername });
+  }
   return (
     <>
       {contacts.length !== 0 ? (
-        <section className="w-full flex flex-col">
+        <section className="w-full flex flex-col h-screen">
           <Header socket={socket} />
           <Messages socket={socket} />
           <TypeArea socket={socket} />

@@ -12,8 +12,8 @@ router.post("/", async (req, res) => {
           { sender: client2, receiver: client1 },
         ],
       },
-      "message sender receiver time"
-    );
+      "message sender receiver time date"
+    ).lean();
     res.status(200).json(messages);
   } catch (error) {
     console.error(error);

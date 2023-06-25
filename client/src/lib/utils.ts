@@ -33,19 +33,34 @@ export interface Contact {
   username: string;
 }
 
+export interface ChatInfo {
+  contactInfo: Contact;
+  messages: Message[];
+}
+
 export async function getMessages(client1: string, client2: string) {
-  const res = await axios.post(process.env.NEXT_PUBLIC_GET_MESSAGES!, {
-    client1: client1,
-    client2: client2,
-  });
-  return res.data;
+  try {
+    const res = await axios.post(process.env.NEXT_PUBLIC_GET_MESSAGES!, {
+      client1: client1,
+      client2: client2,
+    });
+    return res.data;
+  } catch (error: any) {
+    console.error(error);
+    return null;
+  }
 }
 
 export async function getUserData(username: string) {
-  const res = await axios.post(process.env.NEXT_PUBLIC_GET_USER_DATA!, {
-    username: username,
-  });
-  return res.data;
+  try {
+    const res = await axios.post(process.env.NEXT_PUBLIC_GET_USER_DATA!, {
+      username: username,
+    });
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 }
 
 export function getCurrentDate() {

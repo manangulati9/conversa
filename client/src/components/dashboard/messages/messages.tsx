@@ -1,36 +1,13 @@
 import React, { useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useStore } from "@/lib/stores";
-import {
-  Message,
-  getCurrentDate,
-  getCurrentTime,
-  getMessages,
-} from "@/lib/utils";
+import { Message, getCurrentDate, getCurrentTime } from "@/lib/utils";
 import Image from "next/image";
 import beginChat from "../../../../public/begin_chat.svg";
 
 const Messages = React.memo(({ socket }: { socket: any }) => {
-  const {
-    username,
-    contactUsername,
-    messages,
-    setMessages,
-    addMessage,
-    contactName,
-  } = useStore();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getMessages(username, contactUsername);
-        setMessages(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchData();
-  }, [contactUsername]);
+  const { username, contactUsername, addMessage, contactName, messages } =
+    useStore();
 
   useEffect(() => {
     socket.on("receive_message", (data: Message) => {
@@ -38,32 +15,34 @@ const Messages = React.memo(({ socket }: { socket: any }) => {
     });
   }, [socket]);
 
-  useEffect(() => {
-    console.log(messages.length);
-  }, [messages.length]);
-
   return (
     <>
-      {messages.length !== 0 ? (
-        <div className="flex flex-col-reverse gap-4 px-10 py-4 overflow-y-auto scroll-smooth grow">
-          {messages.map((msg) => {
-            const sender = msg.sender;
-            const receiver = msg.receiver;
-            if (
-              (receiver === contactUsername || receiver === username) &&
-              (sender === contactUsername || sender === username)
-            ) {
-              if (sender === username) {
-                return (
-                  <MessageBubble key={uuidv4()} message={msg} type="send" />
-                );
-              } else {
-                return (
-                  <MessageBubble key={uuidv4()} message={msg} type="receive" />
-                );
-              }
-            } else return null;
-          })}
+      {messages().length !== 0 ? (
+        <div className="flex flex-col-reverse gap-4 px-10 py-4 overflow-y-auto scroll-smooth h-full grow">
+          {messages()
+            .map((msg) => {
+              const sender = msg.sender;
+              const receiver = msg.receiver;
+              if (
+                (receiver === contactUsername || receiver === username) &&
+                (sender === contactUsername || sender === username)
+              ) {
+                if (sender === username) {
+                  return (
+                    <MessageBubble key={uuidv4()} message={msg} type="send" />
+                  );
+                } else {
+                  return (
+                    <MessageBubble
+                      key={uuidv4()}
+                      message={msg}
+                      type="receive"
+                    />
+                  );
+                }
+              } else return null;
+            })
+            .reverse()}
         </div>
       ) : (
         <div className="grow flex flex-col items-center justify-center gap-8">

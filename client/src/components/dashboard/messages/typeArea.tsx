@@ -65,7 +65,7 @@ export function TypeArea({ socket }: { socket: any }) {
             onClick={() => {
               setToggle(!toggle);
             }}
-            className="hover:h-12"
+            width={25}
           />
         </div>
         <input
@@ -84,7 +84,7 @@ export function TypeArea({ socket }: { socket: any }) {
           type="submit"
           className="bg-primary p-2 rounded-full hover:opacity-80 transition-opacity"
         >
-          <Image src={Airplane} alt="" width={20} />
+          <Image src={Airplane} alt="" width={22} />
         </button>
       </form>
     </footer>

@@ -44,9 +44,8 @@ export default function MessageSearch() {
                 ref={searchRef}
                 onChange={() => {
                   setMessages(
-                    messageStore.filter((msg) => {
+                    messageStore().filter((msg) => {
                       const queryString = searchRef.current?.value;
-
                       if (queryString) {
                         return msg.message.includes(queryString);
                       } else {

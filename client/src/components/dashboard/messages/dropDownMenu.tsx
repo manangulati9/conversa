@@ -27,7 +27,7 @@ export default function () {
             Delete contact
           </button>
         </DropdownMenuItem>
-        {messages.length !== 0 && (
+        {messages().length !== 0 && (
           <DropdownMenuItem>
             <button
               onClick={() => {
