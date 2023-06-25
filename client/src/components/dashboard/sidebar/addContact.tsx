@@ -18,9 +18,9 @@ interface ContactForm extends HTMLFormControlsCollection {
   contact_username: HTMLInputElement;
 }
 
-export function AddContact({ socket }: { socket: any }) {
+export function AddContact() {
   const formRef = useRef<HTMLFormElement>(null);
-  const { username, addContact, contacts } = useStore();
+  const { username, addContact, socket } = useStore();
 
   useEffect(() => {
     socket.on("contact_added", (contact: Contact) => {

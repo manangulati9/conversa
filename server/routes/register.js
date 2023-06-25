@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
 
     // Validate user input
     if (!(username && password && first_name && last_name)) {
-      res.status(400).send("All input is required");
+      return res.status(400).send("All input is required");
     }
 
     // check if user already exist
@@ -49,6 +49,7 @@ router.post("/", async (req, res) => {
     res.status(200).json(user);
   } catch (err) {
     console.log(err);
+    res.status(500).send("Internal Server Error");
   }
   // Our register logic ends here
 });

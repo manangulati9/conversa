@@ -2,9 +2,9 @@ import { useStore } from "@/lib/stores";
 import Circle from "./avatar";
 import { useRouter } from "next/navigation";
 
-export function Profile({ socket }: { socket: any }) {
+export function Profile() {
   const router = useRouter();
-  const { name, username, contactUsername, logout } = useStore();
+  const { name, username, contactUsername, logout, socket } = useStore();
   return (
     <div className="flex gap-5 items-center w-full">
       <Circle letter={name[0]} bgColor="#54E346" />

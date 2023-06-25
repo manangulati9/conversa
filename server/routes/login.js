@@ -8,11 +8,13 @@ router.post("/", async (req, res) => {
   try {
     const { username, password } = req.body;
     if (!(username && password)) {
-      res.sendStatus(400).send("All input required");
+      return res.status(400).send("All input required"); // Use return to exit the function
     }
     const user = await User.findOne({ username: username });
     if (!user) {
-      res.status(400).send("User doesn't exist. Please create an account.");
+      return res
+        .status(400)
+        .send("User doesn't exist. Please create an account."); // Use return to exit the function
     }
     if (user && (await bcrypt.compare(password, user.password))) {
       const token = await jwt.sign(
@@ -23,12 +25,14 @@ router.post("/", async (req, res) => {
         }
       );
       user.token = token;
-      res.status(200).json(user);
+      return res.status(200).json(user); // Use return to exit the function
     } else {
-      res.status(405).send("Invalid credentials");
+      return res.status(405).send("Invalid credentials"); // Use return to exit the function
     }
   } catch (error) {
     console.log(error);
+    // Handle the error appropriately, e.g., return an error response
+    res.status(500).send("Internal Server Error");
   }
 });
 

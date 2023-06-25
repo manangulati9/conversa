@@ -1,20 +1,18 @@
 import { useStore } from "@/lib/stores";
 import Circle from "./avatar";
 
-export function MessageItem({
+export function ContactItem({
   name,
   contactUsername,
   lastMessage,
   time,
-  socket,
 }: {
   name: string;
   contactUsername: string;
   lastMessage?: string;
   time?: string;
-  socket: any;
 }) {
-  const { username, setContactName, setContactUsername } = useStore();
+  const { username, setContactName, setContactUsername, socket } = useStore();
   const handleClick = () => {
     if (contactUsername !== "" && username !== "") {
       socket.emit("join_room", { sender: username, receiver: contactUsername });

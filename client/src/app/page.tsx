@@ -2,44 +2,83 @@
 import Messages from "@/components/dashboard/messages/main";
 import Sidebar from "@/components/dashboard/sidebar/main";
 import { useStore } from "@/lib/stores";
-import { useEffect, useState, memo } from "react";
+import { useEffect, useState } from "react";
 import io from "socket.io-client";
-import decode from "jwt-decode";
-import { User, getUserData } from "@/lib/utils";
+import decode, { JwtPayload } from "jwt-decode";
+import { getUserData } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
-const socket = io("http://localhost:4000");
-
-export default memo(() => {
+export default function Home() {
   const router = useRouter();
-  const [windowSize, setwindowSize] = useState(0);
-  const { initStates, setToken, token, username } = useStore();
+  const [windowSize, setWindowSize] = useState(0);
+  const { initStates, setToken, token, username, setSocket } = useStore();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
-    } else {
-      const decoded: { username: string } = decode(token);
-      const decodedUsername = decoded.username;
-      if (!username) {
-        getUserData(decodedUsername).then((data: User) => {
-          initStates(data);
-        });
+    const initializeSocket = () => {
+      const socket = io(process.env.NEXT_PUBLIC_SOCKET_SERVER_URL!);
+      setSocket(socket);
+      return socket;
+    };
+
+    const checkTokenAndUserData = async () => {
+      const storedToken = localStorage.getItem("token");
+
+      if (!isTokenValid(storedToken)) {
+        router.push("/login");
+        return;
       }
-      setwindowSize(window.innerWidth);
-      setToken(token);
-    }
-  }, [socket]);
+
+      const decodedToken = decode<DecodedToken>(storedToken as string);
+      const decodedUsername = decodedToken?.username;
+      if (!username) {
+        const userData = await getUserData(decodedUsername);
+        initStates(userData);
+      }
+
+      setToken(storedToken as string);
+    };
+
+    const socket = initializeSocket();
+    checkTokenAndUserData();
+    setWindowSize(window.innerWidth);
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [initStates, router, setSocket, setToken, username]);
+
+  const isAuthenticated = Boolean(token);
 
   return (
     <>
-      {token ? (
+      {isAuthenticated && (
         <div className="text-sm flex">
-          <Sidebar socket={socket} />
-          {windowSize > 850 ? <Messages socket={socket} /> : null}
+          <Sidebar />
+          {windowSize > 850 && <Messages />}
         </div>
-      ) : null}
+      )}
     </>
   );
-});
+}
+
+function isTokenValid(token: string | null): boolean {
+  if (!token) {
+    return false;
+  }
+
+  try {
+    const decodedToken = decode<DecodedToken>(token);
+    const currentTime = Date.now() / 1000;
+
+    if (decodedToken.exp && decodedToken.exp < currentTime) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+interface DecodedToken extends JwtPayload {
+  username: string;
+}

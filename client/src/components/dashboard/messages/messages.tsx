@@ -5,9 +5,15 @@ import { Message, getCurrentDate, getCurrentTime } from "@/lib/utils";
 import Image from "next/image";
 import beginChat from "../../../../public/begin_chat.svg";
 
-const Messages = React.memo(({ socket }: { socket: any }) => {
-  const { username, contactUsername, addMessage, contactName, messages } =
-    useStore();
+export default function () {
+  const {
+    username,
+    contactUsername,
+    addMessage,
+    contactName,
+    messages,
+    socket,
+  } = useStore();
 
   useEffect(() => {
     socket.on("receive_message", (data: Message) => {
@@ -66,7 +72,7 @@ const Messages = React.memo(({ socket }: { socket: any }) => {
       )}
     </>
   );
-});
+}
 
 function MessageBubble({ message, type }: { message: Message; type: string }) {
   return (
@@ -82,5 +88,3 @@ function MessageBubble({ message, type }: { message: Message; type: string }) {
     </div>
   );
 }
-
-export default Messages;

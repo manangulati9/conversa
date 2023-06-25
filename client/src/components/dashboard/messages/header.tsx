@@ -15,9 +15,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-export default function ({ socket }: { socket: any }) {
+export default function () {
   const [chatStatus, setChatStatus] = useState("");
-  const { contactName } = useStore();
+  const { contactName, socket } = useStore();
 
   useEffect(() => {
     socket.on("chat_status", (value: boolean) => {
@@ -37,23 +37,16 @@ export default function ({ socket }: { socket: any }) {
       <div className="flex gap-4 w-fit">
         <MessageSearch />
         <DropDownMenu />
-        <DeleteContact socket={socket} />
-        <DeleteMessages socket={socket} />
+        <DeleteContact />
+        <DeleteMessages />
       </div>
     </header>
   );
 }
 
-function DeleteContact({ socket }: { socket: any }) {
-  const {
-    contactName,
-    contactUsername,
-    contacts,
-    username,
-    deleteContact,
-    setContactName,
-    setContactUsername,
-  } = useStore();
+function DeleteContact() {
+  const { contactName, contactUsername, username, deleteContact, socket } =
+    useStore();
 
   return (
     <AlertDialog>
@@ -76,11 +69,6 @@ function DeleteContact({ socket }: { socket: any }) {
                 username: contactUsername,
               };
               deleteContact(currentContact);
-              if (contacts.length !== 0) {
-                setContactUsername(contacts[0].contactInfo.username);
-                setContactName(contacts[0].contactInfo.name);
-              }
-
               socket.emit("delete_contact", {
                 username: username,
                 contactUsername: contactUsername,
@@ -95,8 +83,8 @@ function DeleteContact({ socket }: { socket: any }) {
   );
 }
 
-function DeleteMessages({ socket }: { socket: any }) {
-  const { contactName, contactUsername, username, deleteAllMessages } =
+function DeleteMessages() {
+  const { contactName, contactUsername, username, deleteAllMessages, socket } =
     useStore();
   return (
     <AlertDialog>

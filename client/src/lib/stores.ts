@@ -8,6 +8,8 @@ interface StoreType {
   contactUsername: string;
   contacts: ChatInfo[];
   token: string;
+  socket: any;
+  setSocket: (s: any) => void;
   messages: () => Message[];
   initStates: (data: User) => void;
   setToken: (t: string) => void;
@@ -31,6 +33,8 @@ export const useStore = create<StoreType>((set, get) => ({
   contactUsername: "",
   contacts: [],
   token: "",
+  socket: null,
+  setSocket: (s: any) => set({ socket: s }),
   setToken: (t: string) => set({ token: t }),
   setName: (s: string) => set({ name: s }),
   setUsername: (s: string) => set({ username: s }),
@@ -40,15 +44,10 @@ export const useStore = create<StoreType>((set, get) => ({
   messages: () => {
     const contacts = get().contacts;
     const contactUsername = get().contactUsername;
-    if (contacts.length !== 0) {
-      const contact = contacts.find((c) => {
-        if (c) {
-          c.contactInfo.username === contactUsername;
-        }
-      });
-      return contact ? contact.messages : [];
-    }
-    return [];
+    const contact = contacts.filter(
+      (contact) => contact.contactInfo.username === contactUsername
+    );
+    return contact.length !== 0 ? contact[0].messages : [];
   },
 
   initStates: async (userData: User) => {
@@ -131,7 +130,15 @@ export const useStore = create<StoreType>((set, get) => ({
     const newContactList = get().contacts.filter((contact) => {
       return contact.contactInfo.username !== c.username;
     });
-    set({ contacts: newContactList });
+    set({
+      contacts: newContactList,
+      contactName:
+        newContactList.length !== 0 ? newContactList[0].contactInfo.name : "",
+      contactUsername:
+        newContactList.length !== 0
+          ? newContactList[0].contactInfo.username
+          : "",
+    });
   },
 
   deleteAllMessages: (c: Contact) => {

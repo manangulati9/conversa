@@ -5,7 +5,7 @@ import { Label } from "../ui/label";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { FormElements, User } from "../../lib/utils";
+import { FormElements } from "../../lib/utils";
 import axios from "axios";
 import { useStore } from "@/lib/stores";
 import { Checkbox } from "../ui/checkbox";
@@ -24,12 +24,16 @@ export default function () {
           password: elements.pwd.value,
         };
         const res = await axios.post(process.env.NEXT_PUBLIC_LOGIN!, data);
-        const user: User = res.data;
-        localStorage.setItem("token", user.token);
-        initStates(user);
-        router.push("/");
-      } catch (error: any) {
-        alert(error.response.data);
+        if (res.status === 200) {
+          const user = res.data;
+          localStorage.setItem("token", user.token);
+          initStates(user);
+          router.push("/");
+        } else {
+          alert(res.data);
+        }
+      } catch (error) {
+        console.error(error);
       }
     }
   };

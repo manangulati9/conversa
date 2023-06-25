@@ -28,15 +28,19 @@ export default function () {
         };
         if (data.confirmPwd === data.password) {
           const res = await axios.post(process.env.NEXT_PUBLIC_REGISTER!, data);
-          const user: User = res.data;
-          localStorage.setItem("token", user.token);
-          initStates(user);
-          router.push("/");
+          if (res.status === 200) {
+            const user: User = res.data;
+            localStorage.setItem("token", user.token);
+            initStates(user);
+            router.push("/");
+          } else {
+            alert(res.data);
+          }
         } else {
-          throw new Error("Password doesn't match. Please try again");
+          alert("Password doesn't match. Please try again");
         }
-      } catch (error: any) {
-        alert(error.message);
+      } catch (error) {
+        console.error(error);
       }
     }
   };

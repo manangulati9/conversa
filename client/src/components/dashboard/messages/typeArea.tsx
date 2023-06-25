@@ -9,8 +9,8 @@ import Picker from "@emoji-mart/react";
 interface MessageForm extends HTMLFormControlsCollection {
   msg: HTMLInputElement;
 }
-export function TypeArea({ socket }: { socket: any }) {
-  const { username, contactUsername } = useStore();
+export function TypeArea() {
+  const { username, contactUsername, socket } = useStore();
   const [toggle, setToggle] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
