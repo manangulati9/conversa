@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
 
     // Validate user input
     if (!(username && password && first_name && last_name)) {
-      return res.status(400).send("All input is required");
+      return res.status(401).send("All input is required");
     }
 
     // check if user already exist
@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
     const oldUser = await User.findOne({ username });
 
     if (oldUser) {
-      return res.status(409).send("User Already Exist. Please Login");
+      return res.status(401).send("User Already Exist. Please Login");
     }
 
     //Encrypt user password

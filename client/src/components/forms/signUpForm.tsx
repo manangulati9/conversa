@@ -1,8 +1,7 @@
-"use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FormElements, User } from "@/lib/utils";
+import { FormElements, User, initializeSocket } from "@/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
@@ -10,39 +9,44 @@ import axios from "axios";
 import { useStore } from "@/lib/stores";
 import { Checkbox } from "../ui/checkbox";
 
-export default function () {
+export default function SignUpForm() {
   const router = useRouter();
-  const { initStates } = useStore();
+  const { initStates, setSocket } = useStore();
   const [inputType, setInputType] = useState("password");
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (e.target !== null) {
-      try {
-        const elements = e.currentTarget.elements as FormElements;
-        const data = {
-          first_name: elements.fname.value,
-          last_name: elements.lname.value,
-          username: elements.username.value,
-          password: elements.pwd.value,
-          confirmPwd: elements.confirmPwd.value,
-        };
-        if (data.confirmPwd === data.password) {
-          const res = await axios.post(process.env.NEXT_PUBLIC_REGISTER!, data);
-          if (res.status === 200) {
-            const user: User = res.data;
-            localStorage.setItem("token", user.token);
-            initStates(user);
-            router.push("/");
-          } else {
-            alert(res.data);
-          }
-        } else {
-          alert("Password doesn't match. Please try again");
+
+    try {
+      const elements = e.currentTarget.elements as FormElements;
+      const data = {
+        first_name: elements.fname.value,
+        last_name: elements.lname.value,
+        username: elements.username.value,
+        password: elements.pwd.value,
+        confirmPwd: elements.confirmPwd.value,
+      };
+
+      if (data.confirmPwd === data.password) {
+        const res = await axios.post(process.env.NEXT_PUBLIC_REGISTER!, data);
+
+        if (res.status === 200) {
+          const user: User = res.data;
+          localStorage.setItem("token", user.token);
+          setSocket(initializeSocket(user.username));
+          initStates(user);
+          router.push("/");
         }
-      } catch (error) {
-        console.error(error);
+      } else {
+        alert("Password doesn't match. Please try again");
       }
+    } catch (error: any) {
+      alert(error.response.data);
     }
+  };
+
+  const handleTogglePassword = () => {
+    setInputType((prevType) => (prevType === "password" ? "text" : "password"));
   };
 
   return (
@@ -51,6 +55,7 @@ export default function () {
       onSubmit={handleSubmit}
     >
       <p className="text-4xl font-semibold text-center">Sign Up</p>
+
       <div className="flex gap-5">
         <div className="grid w-full items-center gap-1.5">
           <Label htmlFor="fname">First name</Label>
@@ -63,11 +68,13 @@ export default function () {
           <p className="text-sm text-muted-foreground">Enter your last name</p>
         </div>
       </div>
+
       <div className="grid w-full items-center gap-1.5">
         <Label htmlFor="username">Username</Label>
         <Input type="text" id="username" name="username" required />
         <p className="text-sm text-muted-foreground">Choose a username</p>
       </div>
+
       <div className="grid w-full items-center gap-1.5">
         <Label htmlFor="pwd">Password</Label>
         <Input
@@ -82,8 +89,9 @@ export default function () {
           Create a secure password
         </p>
       </div>
+
       <div className="grid w-full items-center gap-1.5">
-        <Label htmlFor="pwd">Confirm Password</Label>
+        <Label htmlFor="confirmPwd">Confirm Password</Label>
         <Input
           type={inputType}
           id="confirmPwd"
@@ -93,18 +101,16 @@ export default function () {
           maxLength={20}
         />
       </div>
-      <div className="flex gap-4 items-center  w-full ">
-        <Checkbox
-          name="pwd-checkbox"
-          onClick={() => {
-            setInputType(inputType === "password" ? "text" : "password");
-          }}
-        />
+
+      <div className="flex gap-4 items-center w-full">
+        <Checkbox name="pwd-checkbox" onClick={handleTogglePassword} />
         <Label htmlFor="pwd-checkbox">Show password</Label>
       </div>
+
       <Button type="submit" className="w-fit">
         Create account
       </Button>
+
       <p>
         Already have an account?{" "}
         <Link href="/login" className="hover:text-blue-500 underline">

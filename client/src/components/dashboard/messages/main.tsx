@@ -5,7 +5,6 @@ import Header from "./header";
 import Image from "next/image";
 import illus from "../../../../public/chatting-illus.svg";
 import { Poppins } from "next/font/google";
-import { useEffect } from "react";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -16,12 +15,9 @@ const poppins = Poppins({
 export default function () {
   const { username, contactUsername, contacts, socket } = useStore();
   if (username !== "" && contactUsername !== "") {
-    socket.emit("join_room", { sender: username, receiver: contactUsername });
+    socket &&
+      socket.emit("join_room", { sender: username, receiver: contactUsername });
   }
-
-  useEffect(() => {
-    console.log(contacts);
-  }, [contacts]);
 
   return (
     <>
@@ -32,12 +28,12 @@ export default function () {
           <TypeArea />
         </section>
       ) : (
-        <section
+        <div
           className={`w-full flex flex-col justify-center items-center h-screen gap-10 text-center ${poppins.className}`}
         >
           <Image src={illus} alt="" height={500} />
           <p className="text-4xl">Add a new user to get started!</p>
-        </section>
+        </div>
       )}
     </>
   );

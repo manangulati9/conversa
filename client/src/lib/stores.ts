@@ -9,6 +9,8 @@ interface StoreType {
   contacts: ChatInfo[];
   token: string;
   socket: any;
+  onlineUsers: string[];
+  setOnlineUsers: (s: string[]) => void;
   setSocket: (s: any) => void;
   messages: () => Message[];
   initStates: (data: User) => void;
@@ -34,6 +36,8 @@ export const useStore = create<StoreType>((set, get) => ({
   contacts: [],
   token: "",
   socket: null,
+  onlineUsers: [],
+  setOnlineUsers: (s: string[]) => set({ onlineUsers: s }),
   setSocket: (s: any) => set({ socket: s }),
   setToken: (t: string) => set({ token: t }),
   setName: (s: string) => set({ name: s }),
@@ -45,7 +49,7 @@ export const useStore = create<StoreType>((set, get) => ({
     const contacts = get().contacts;
     const contactUsername = get().contactUsername;
     const contact = contacts.filter(
-      (contact) => contact.contactInfo.username === contactUsername
+      (c) => c.contactInfo.username === contactUsername
     );
     return contact.length !== 0 ? contact[0].messages : [];
   },
@@ -63,7 +67,7 @@ export const useStore = create<StoreType>((set, get) => ({
         });
         const contacts: ChatInfo[] = await Promise.all(
           userData.contacts.map(async (contact) => {
-            const messages: Message[] = await getMessages(
+            const messages = await getMessages(
               userData.username,
               contact.username
             );
@@ -97,7 +101,10 @@ export const useStore = create<StoreType>((set, get) => ({
     const username = get().username;
     const msgs = await getMessages(username, c.username);
     const contacts = get().contacts;
-    const newContact = { contactInfo: c, messages: [] };
+    const newContact: { contactInfo: Contact; messages: Message[] } = {
+      contactInfo: c,
+      messages: [],
+    };
     if (msgs) {
       newContact.messages = msgs;
     }
@@ -159,7 +166,7 @@ export const useStore = create<StoreType>((set, get) => ({
       return {
         ...contact,
         messages: contact.messages.filter((msg) => {
-          msg.message === m.message;
+          return msg.message !== m.message;
         }),
       };
     });

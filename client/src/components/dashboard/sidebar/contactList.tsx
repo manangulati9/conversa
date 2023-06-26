@@ -13,7 +13,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import noData from "../../../../public/no_data.svg";
 import { ChatInfo } from "@/lib/utils";
 
@@ -25,8 +25,10 @@ export function ContactList() {
 
   useEffect(() => {
     if (toggleSearchBox && searchBoxRef.current) {
+      searchBoxRef.current.value = "";
       searchBoxRef.current.focus();
     }
+    setList(contacts);
   }, [toggleSearchBox]);
 
   useEffect(() => {
@@ -35,18 +37,16 @@ export function ContactList() {
 
   return (
     <div className="flex flex-col w-full grow bg-background text-white border-b-2 rounded-none border-slate-500 ">
-      <div>
-        <ChatsHeader
-          toggleSearchBox={toggleSearchBox}
-          setToggleSearchBox={setToggleSearchBox}
-        />
-        <SearchBox
-          toggleSearchBox={toggleSearchBox}
-          searchBoxRef={searchBoxRef}
-          contacts={contacts}
-          setList={setList}
-          setToggleSearchBox={setToggleSearchBox}
-        />
+      <div className="border-b-2 border-slate-500 pb-4">
+        <ChatsHeader setToggleSearchBox={setToggleSearchBox} />
+        {toggleSearchBox && (
+          <SearchBox
+            toggleSearchBox={toggleSearchBox}
+            searchBoxRef={searchBoxRef}
+            contacts={contacts}
+            setList={setList}
+          />
+        )}
       </div>
       {contacts.length !== 0 ? (
         <ScrollArea className="py-3 border-slate-500">
@@ -100,14 +100,12 @@ function renderContactItem(contact: ChatInfo) {
 }
 
 function ChatsHeader({
-  toggleSearchBox,
   setToggleSearchBox,
 }: {
-  toggleSearchBox: boolean;
   setToggleSearchBox: Dispatch<SetStateAction<boolean>>;
 }) {
   return (
-    <div className="flex justify-between items-center mb-4">
+    <div className="flex justify-between items-center mb-3">
       <p className="text-3xl font-semibold">Chats</p>
       <div className="flex gap-5">
         <button>
@@ -117,7 +115,7 @@ function ChatsHeader({
             width={32}
             className="hover:opacity-80 transition-opacity"
             onClick={() => {
-              setToggleSearchBox(!toggleSearchBox);
+              setToggleSearchBox((prev) => !prev);
             }}
           />
         </button>
@@ -128,17 +126,14 @@ function ChatsHeader({
 }
 
 function SearchBox({
-  toggleSearchBox,
   searchBoxRef,
   contacts,
   setList,
-  setToggleSearchBox,
 }: {
   toggleSearchBox: boolean;
   searchBoxRef: RefObject<HTMLInputElement>;
   contacts: ChatInfo[];
   setList: Dispatch<SetStateAction<ChatInfo[]>>;
-  setToggleSearchBox: Dispatch<SetStateAction<boolean>>;
 }) {
   const handleSearchInputChange = () => {
     const queryString = searchBoxRef.current?.value.toLowerCase();
@@ -153,26 +148,24 @@ function SearchBox({
     );
   };
 
-  const handleSearchInputBlur = (e: any) => {
-    setToggleSearchBox(!toggleSearchBox);
-    setList(contacts);
-    e.target!.value = "";
-  };
-
   return (
-    <div
-      className={`flex items-center border-2 rounded-full px-3 transition-opacity ${
-        toggleSearchBox ? "visible" : "hidden"
-      }`}
-    >
-      <Search className="mr-2 h-4 w-4 shrink-0 opacity-80 text-white" />
+    <div className="flex items-center border-2 rounded-full px-3 transition-opacity">
+      <Search className="mr-2 h-5 w-5 shrink-0 opacity-80 text-white" />
       <input
         className="h-9 w-full bg-transparent p-3 text-sm border-0 placeholder:text-slate-400 focus:outline-none"
         placeholder="Search a contact..."
         ref={searchBoxRef}
         onChange={handleSearchInputChange}
-        onBlur={(e) => handleSearchInputBlur(e)}
       />
+      <button
+        onClick={() => {
+          if (searchBoxRef.current) searchBoxRef.current.value = "";
+          setList(contacts);
+          searchBoxRef.current?.focus();
+        }}
+      >
+        <X className="opacity-80 h-5 w-5" />
+      </button>
     </div>
   );
 }

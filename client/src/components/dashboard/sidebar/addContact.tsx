@@ -23,9 +23,10 @@ export function AddContact() {
   const { username, addContact, socket } = useStore();
 
   useEffect(() => {
-    socket.on("contact_added", (contact: Contact) => {
-      addContact(contact);
-    });
+    socket &&
+      socket.on("contact_added", (contact: Contact) => {
+        addContact(contact);
+      });
   }, [socket]);
 
   return (

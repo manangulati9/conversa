@@ -1,42 +1,46 @@
-import Image from "next/image";
-import Smiley from "../../../../public/smiley.svg";
-import Airplane from "../../../../public/paper-airplane.svg";
 import { useRef, useState } from "react";
 import { useStore } from "@/lib/stores";
 import { getCurrentDate, getCurrentTime } from "@/lib/utils";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
-interface MessageForm extends HTMLFormControlsCollection {
-  msg: HTMLInputElement;
-}
+import { Send, SmilePlus } from "lucide-react";
+
 export function TypeArea() {
   const { username, contactUsername, socket } = useStore();
   const [toggle, setToggle] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const message = inputValue.trim();
+    if (message) {
+      const data = {
+        sender: username,
+        receiver: contactUsername,
+        message: message,
+        date: getCurrentDate(),
+        time: getCurrentTime(),
+      };
+      socket && socket.emit("send_message", data);
+      setInputValue("");
+      inputRef.current?.focus();
+    }
+  };
+
+  const handleEmojiSelect = (data: any) => {
+    const str = inputRef.current?.value;
+    const updatedValue = str ? `${str} ${data.native}` : data.native;
+    setInputValue(updatedValue);
+    inputRef.current?.focus();
+    setToggle(!toggle);
+  };
+
   return (
     <footer>
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (e.target) {
-            const elements = e.currentTarget.elements as MessageForm;
-            const message = elements.msg.value;
-            const data = {
-              sender: username,
-              receiver: contactUsername,
-              message: message,
-              date: getCurrentDate(),
-              time: getCurrentTime(),
-            };
-            if (message) {
-              socket.emit("send_message", data);
-            }
-            setInputValue("");
-          }
-        }}
-        className="flex w-full py-4 px-8 items-center gap-8 bg-[#090E1B]"
+        onSubmit={handleSubmit}
+        className="flex w-full items-center bg-[#090E1B] h-14 py-8 px-4"
       >
         {toggle && (
           <div
@@ -47,29 +51,24 @@ export function TypeArea() {
           >
             <Picker
               data={data}
-              onEmojiSelect={(data: any) => {
-                const str = inputRef.current?.value;
-                setInputValue(str + " " + data.native);
-                inputRef.current?.focus();
-                setToggle(!toggle);
-              }}
+              onEmojiSelect={handleEmojiSelect}
               theme="dark"
               autoFocus
             />
           </div>
         )}
-        <div className="cursor-pointer">
-          <Image
-            src={Smiley}
-            alt=""
-            onClick={() => {
-              setToggle(!toggle);
-            }}
-            width={25}
+        <div
+          onClick={() => {
+            setToggle(!toggle);
+          }}
+        >
+          <SmilePlus
+            color="#ffffff"
+            className="hover:bg-[#1D2C4E] transition-colors cursor-pointer p-2 rounded-full h-10 w-10 mr-3"
           />
         </div>
         <input
-          className="flex-grow text-base focus:outline-none text-white bg-[#090E1B]"
+          className="grow text-base focus:outline-none text-white bg-[#090E1B]"
           placeholder="Start typing..."
           name="msg"
           id="msg"
@@ -78,13 +77,14 @@ export function TypeArea() {
           onChange={(e) => {
             setInputValue(e.target.value);
           }}
-          autoComplete="false"
+          autoComplete="off"
+          autoFocus
         />
-        <button
-          type="submit"
-          className="bg-primary p-2 rounded-full hover:opacity-80 transition-opacity"
-        >
-          <Image src={Airplane} alt="" width={22} />
+        <button type="submit">
+          <Send
+            color="#ffffff"
+            className="hover:bg-[#1D2C4E] transition-colors rounded-full p-2 h-10 w-10"
+          />
         </button>
       </form>
     </footer>

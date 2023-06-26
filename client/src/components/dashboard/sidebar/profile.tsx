@@ -15,10 +15,12 @@ export function Profile() {
           onClick={() => {
             router.push("/login");
             logout();
-            socket.emit("leave_room", {
-              username: username,
-              contact: contactUsername,
-            });
+            socket &&
+              socket.emit("leave_room", {
+                username: username,
+                contact: contactUsername,
+              });
+            socket.disconnect();
           }}
         >
           Logout

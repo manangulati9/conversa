@@ -33,15 +33,13 @@ const io = new Server(server, {
   },
 });
 
+const onlineUsers = new Set();
+
 io.on("connection", (socket) => {
   console.log(`User connected ${socket.id}`);
-
-  socket.on("join_room", ({ sender, receiver }) => {
-    const room = generateRoomId(sender, receiver);
-    socket.join(room);
-    const userCount = io.sockets.adapter.rooms.get(room).size;
-    io.to(room).emit("chat_status", userCount === 2);
-  });
+  const { newUser } = socket.handshake.query;
+  onlineUsers.add(newUser);
+  io.emit("online-users", Array.from(onlineUsers));
 
   socket.on("send_message", async (data) => {
     const { sender, receiver } = data;
@@ -60,16 +58,6 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("leave_room", ({ username, contact }) => {
-    const room = generateRoomId(username, contact);
-    socket.leave(room);
-    const socketRoom = io.sockets.adapter.rooms.get(room);
-    if (socketRoom) {
-      const userCount = socketRoom.size;
-      io.to(room).emit("chat_status", userCount === 2);
-    }
-  });
-
   socket.on("delete_contact", async ({ username, contactUsername }) => {
     try {
       await deleteContact(username, contactUsername);
@@ -84,6 +72,11 @@ io.on("connection", (socket) => {
     } catch (error) {
       socket.emit("error", error);
     }
+  });
+
+  socket.on("disconnect", () => {
+    onlineUsers.delete(newUser);
+    io.emit("online-users", Array.from(onlineUsers));
   });
 });
 

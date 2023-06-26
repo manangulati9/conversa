@@ -14,27 +14,34 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function () {
-  const [chatStatus, setChatStatus] = useState("");
-  const { contactName, socket } = useStore();
-
-  useEffect(() => {
-    socket.on("chat_status", (value: boolean) => {
-      setChatStatus(value ? "online" : "offline");
-    });
-  }, [socket]);
+  const { contactName, socket, contactUsername, onlineUsers } = useStore();
+  const router = useRouter();
 
   return (
-    <header className="flex justify-between py-4 px-8 border-b-2 border-slate-500">
-      <div className="flex gap-3">
+    <header className="flex justify-between py-4 px-8 items-center">
+      {window.innerWidth < 850 && (
+        <button
+          onClick={() => router.push("/")}
+          className="border p-2 rounded-full"
+        >
+          <ArrowLeft />
+        </button>
+      )}
+
+      <div className="flex gap-3 items-center">
         <Circle letter={contactName[0]} bgColor="#0E49B5" />
         <div>
           <p className="text-base font-semibold">{contactName}</p>
-          <p className="text-primary font-medium">{chatStatus}</p>
+          <p className="text-primary font-medium">
+            {onlineUsers.includes(contactUsername) ? "online" : "offline"}
+          </p>
         </div>
       </div>
-      <div className="flex gap-4 w-fit">
+      <div className="flex gap-3 w-fit">
         <MessageSearch />
         <DropDownMenu />
         <DeleteContact />
@@ -50,7 +57,10 @@ function DeleteContact() {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger id="del_contact"></AlertDialogTrigger>
+      <AlertDialogTrigger
+        className="hidden"
+        id="del_contact"
+      ></AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
@@ -69,10 +79,11 @@ function DeleteContact() {
                 username: contactUsername,
               };
               deleteContact(currentContact);
-              socket.emit("delete_contact", {
-                username: username,
-                contactUsername: contactUsername,
-              });
+              socket &&
+                socket.emit("delete_contact", {
+                  username: username,
+                  contactUsername: contactUsername,
+                });
             }}
           >
             Continue
@@ -88,7 +99,7 @@ function DeleteMessages() {
     useStore();
   return (
     <AlertDialog>
-      <AlertDialogTrigger id="del_msgs"></AlertDialogTrigger>
+      <AlertDialogTrigger className="hidden" id="del_msgs"></AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
@@ -106,10 +117,11 @@ function DeleteMessages() {
                 name: contactName,
                 username: contactUsername,
               });
-              socket.emit("delete_chats_all", {
-                username: username,
-                contactUsername: contactUsername,
-              });
+              socket &&
+                socket.emit("delete_chats_all", {
+                  username: username,
+                  contactUsername: contactUsername,
+                });
             }}
           >
             Continue
