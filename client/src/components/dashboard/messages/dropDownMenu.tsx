@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useStore } from "@/lib/stores";
+import { useStore } from "@/lib/store";
 
 export default function () {
   const { messages } = useStore();
@@ -27,7 +27,7 @@ export default function () {
             Delete contact
           </button>
         </DropdownMenuItem>
-        {messages().length !== 0 && (
+        {messages.length !== 0 && (
           <DropdownMenuItem>
             <button
               onClick={() => {

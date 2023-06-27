@@ -1,28 +1,29 @@
+const express = require("express");
+const router = express.Router();
 const Message = require("../models/message");
 const User = require("../models/user");
-const { getCurrentTime } = require("./utils");
 
-async function saveMessageToDB({ sender, receiver, message, date, time }) {
+router.post("/", async (req, res) => {
+  const { username } = req.body;
   try {
-    if (!sender || !receiver || !message || !date || !time) {
-      throw new Error("Invalid data");
+    const data = await User.findOne({ username }).lean();
+    if (data) {
+      const userInfo = {
+        name: data.name,
+        username: data.username,
+        contacts: data.contacts,
+      };
+      return res.status(200).json(userInfo);
+    } else {
+      return res.status(400).send("Invalid username");
     }
-
-    const newMessage = await Message.create({
-      sender: sender,
-      receiver: receiver,
-      message: message,
-      date: date,
-      time: time,
-    });
-
-    return newMessage;
   } catch (error) {
-    throw error;
+    return res.status(500).send("Internal server error");
   }
-}
+});
 
-async function saveContact(username, contactUsername) {
+router.post("/add-contact", async (req, res) => {
+  const { username, contactUsername } = req.body;
   try {
     if (!username || !contactUsername) {
       throw new Error("Invalid data");
@@ -34,11 +35,11 @@ async function saveContact(username, contactUsername) {
     ]);
 
     if (!contact) {
-      throw new Error("Contact user doesn't exist");
+      res.status(404).send("Contact user doesn't exist");
     }
 
     if (!user) {
-      throw new Error("User doesn't exist");
+      res.status(404).send("User doesn't exist");
     }
 
     const existingContact = user.contacts.find(
@@ -46,7 +47,7 @@ async function saveContact(username, contactUsername) {
     );
 
     if (existingContact) {
-      throw new Error("Contact already exists");
+      res.status(404).send("Contact already exists");
     }
 
     const newContact = {
@@ -58,13 +59,14 @@ async function saveContact(username, contactUsername) {
 
     await user.save();
 
-    return newContact;
+    res.status(200).json(newContact);
   } catch (error) {
-    throw error;
+    res.status(500).send("Internal server error");
   }
-}
+});
 
-async function deleteContact(username, contactUsername) {
+router.post("/delete-contact", async (req, res) => {
+  const { username, contactUsername } = req.body;
   try {
     if (username && contactUsername) {
       await User.updateOne(
@@ -88,33 +90,15 @@ async function deleteContact(username, contactUsername) {
         });
       }
 
-      return "Contact deleted successfully and messages deleted.";
+      res
+        .status(200)
+        .send("Contact deleted successfully and messages deleted.");
     } else {
-      throw new Error("Invalid data");
+      res.status(401).send("Invalid data");
     }
   } catch (error) {
-    throw error;
+    res.status(500).send("Internal server error");
   }
-}
+});
 
-async function deleteAllChats(username, contactUsername) {
-  if (username && contactUsername) {
-    const query = {
-      $or: [
-        { sender: username, receiver: contactUsername },
-        { sender: contactUsername, receiver: username },
-      ],
-    };
-    await Message.deleteMany(query);
-    return "Messages deleted";
-  } else {
-    throw new Error("Invalid data");
-  }
-}
-
-module.exports = {
-  saveMessageToDB,
-  saveContact,
-  deleteContact,
-  deleteAllChats,
-};
+module.exports = router;

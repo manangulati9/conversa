@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useStore } from "@/lib/stores";
+import { useStore } from "@/lib/store";
 import { getCurrentDate, getCurrentTime } from "@/lib/utils";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";

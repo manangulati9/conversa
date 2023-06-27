@@ -1,4 +1,4 @@
-import { useStore } from "@/lib/stores";
+import { useStore } from "@/lib/store";
 import Circle from "./avatar";
 import { useRouter } from "next/navigation";
 
@@ -16,7 +16,7 @@ export function ContactItem({
   const { username, setContactName, setContactUsername, socket } = useStore();
   const router = useRouter();
   const handleClick = () => {
-    if (contactUsername !== "" && username !== "") {
+    if (contactUsername !== "" && username !== "" && socket) {
       socket.emit("join_room", { username, contactUsername });
       setContactName(name);
       setContactUsername(contactUsername);

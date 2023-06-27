@@ -1,8 +1,8 @@
-import { useStore } from "@/lib/stores";
+import { useStore } from "@/lib/store";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FormEvent, useEffect, useRef } from "react";
+import { FormEvent, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,6 @@ import {
 } from "../../ui/dialog";
 import Image from "next/image";
 import Edit from "../../../../public/edit.svg";
-import { Contact } from "@/lib/utils";
 
 interface ContactForm extends HTMLFormControlsCollection {
   contact_username: HTMLInputElement;
@@ -20,14 +19,7 @@ interface ContactForm extends HTMLFormControlsCollection {
 
 export function AddContact() {
   const formRef = useRef<HTMLFormElement>(null);
-  const { username, addContact, socket } = useStore();
-
-  useEffect(() => {
-    socket &&
-      socket.on("contact_added", (contact: Contact) => {
-        addContact(contact);
-      });
-  }, [socket]);
+  const { addContact } = useStore();
 
   return (
     <Dialog>
@@ -53,10 +45,7 @@ export function AddContact() {
             e.preventDefault();
             const contactUsername = (formRef.current?.elements as ContactForm)
               .contact_username.value;
-            socket.emit("add_contact", {
-              username: username,
-              contactUsername: contactUsername,
-            });
+            addContact(contactUsername);
             document.getElementById("dialog-trigger")?.click();
           }}
         >

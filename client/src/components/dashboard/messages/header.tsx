@@ -1,4 +1,4 @@
-import { useStore } from "@/lib/stores";
+import { useStore } from "@/lib/store";
 import Circle from "../sidebar/avatar";
 import MessageSearch from "./messageSearch";
 import DropDownMenu from "./dropDownMenu";
@@ -51,8 +51,7 @@ export default function () {
 }
 
 function DeleteContact() {
-  const { contactName, contactUsername, username, deleteContact, socket } =
-    useStore();
+  const { contactName, deleteContact, contactUsername } = useStore();
 
   return (
     <AlertDialog>
@@ -73,16 +72,7 @@ function DeleteContact() {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
-              const currentContact = {
-                name: contactName,
-                username: contactUsername,
-              };
-              deleteContact(currentContact);
-              socket &&
-                socket.emit("delete_contact", {
-                  username: username,
-                  contactUsername: contactUsername,
-                });
+              deleteContact(contactUsername);
             }}
           >
             Continue
@@ -94,8 +84,7 @@ function DeleteContact() {
 }
 
 function DeleteMessages() {
-  const { contactName, contactUsername, username, deleteAllMessages, socket } =
-    useStore();
+  const { contactName, deleteAllMessages } = useStore();
   return (
     <AlertDialog>
       <AlertDialogTrigger className="hidden" id="del_msgs"></AlertDialogTrigger>
@@ -112,15 +101,7 @@ function DeleteMessages() {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
-              deleteAllMessages({
-                name: contactName,
-                username: contactUsername,
-              });
-              socket &&
-                socket.emit("delete_chats_all", {
-                  username: username,
-                  contactUsername: contactUsername,
-                });
+              deleteAllMessages();
             }}
           >
             Continue

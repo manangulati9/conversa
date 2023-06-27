@@ -8,11 +8,11 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Search } from "lucide-react";
-import { Message } from "@/lib/utils";
 import { v4 as uuidv4 } from "uuid";
-import { useStore } from "@/lib/stores";
+import { useStore } from "@/lib/store";
 import { useState, useRef } from "react";
 import Image from "next/image";
+import { Message } from "@/lib/functions";
 
 export default function MessageSearch() {
   const messageStore = useStore((state) => state.messages);
@@ -23,7 +23,7 @@ export default function MessageSearch() {
   const handleSearchChange = () => {
     const queryString = searchRef.current?.value.toLowerCase();
     if (queryString) {
-      const filteredMessages = messageStore().filter((msg) =>
+      const filteredMessages = messageStore.filter((msg) =>
         msg.message.toLowerCase().includes(queryString)
       );
       setMessages(filteredMessages);

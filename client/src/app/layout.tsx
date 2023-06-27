@@ -1,10 +1,10 @@
 "use client";
 import "./globals.css";
 import { Inter } from "next/font/google";
-import { useStore } from "@/lib/stores";
+import { useStore } from "@/lib/store";
 import { useEffect } from "react";
 import decode, { JwtPayload } from "jwt-decode";
-import { getUserData, initializeSocket } from "@/lib/utils";
+import { getUserData, initializeSocket } from "@/lib/functions";
 import { useRouter } from "next/navigation";
 const inter = Inter({ subsets: ["latin"] });
 

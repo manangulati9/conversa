@@ -17,7 +17,7 @@ export default function Home() {
         <Image src={Logo} priority alt="" />
         <SignUpForm />
       </div>
-      <div className="flex flex-col justify-evenly">
+      <div className="flex flex-col justify-evenly gap-10 pb-9">
         <Image src={illus4} alt="" loading="eager" />
         <Image src={illus3} alt="" height={260} loading="eager" />
       </div>

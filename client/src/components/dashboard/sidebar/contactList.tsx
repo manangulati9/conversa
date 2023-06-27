@@ -1,5 +1,5 @@
 import { ScrollArea } from "../../ui/scrollarea";
-import { useStore } from "@/lib/stores";
+import { useStore } from "@/lib/store";
 import { v4 as uuidv4 } from "uuid";
 import { ContactItem } from "./contactItem";
 import { AddContact } from "./addContact";
@@ -15,13 +15,13 @@ import {
 } from "react";
 import { Search, X } from "lucide-react";
 import noData from "../../../../public/no_data.svg";
-import { ChatInfo } from "@/lib/utils";
+import { Contact, getMessages } from "@/lib/functions";
 
 export function ContactList() {
-  const { contacts } = useStore();
+  const { username, contacts } = useStore();
   const [toggleSearchBox, setToggleSearchBox] = useState(false);
   const searchBoxRef = useRef<HTMLInputElement>(null);
-  const [list, setList] = useState<ChatInfo[]>(contacts);
+  const [list, setList] = useState<Contact[]>(contacts);
 
   useEffect(() => {
     if (toggleSearchBox && searchBoxRef.current) {
@@ -50,7 +50,9 @@ export function ContactList() {
       </div>
       {contacts.length !== 0 ? (
         <ScrollArea className="py-3 border-slate-500">
-          <div className="flex flex-col gap-6">{renderContactItems(list)}</div>
+          <div className="flex flex-col gap-6">
+            {renderContactItems(username, list)}
+          </div>
         </ScrollArea>
       ) : (
         <NoResults title="No contacts added" />
@@ -68,32 +70,36 @@ function NoResults({ title }: { title: string }) {
   );
 }
 
-function renderContactItems(list: ChatInfo[]) {
+function renderContactItems(username: string, list: Contact[]) {
   if (list.length === 0) {
     return <NoResults title="No results found" />;
   }
 
   const renderedItems = list.map((contact) => {
-    return renderContactItem(contact);
+    return renderContactItem(username, contact);
   });
 
   return renderedItems;
 }
 
-function renderContactItem(contact: ChatInfo) {
-  const msgs = contact.messages
-    .filter((msg) => msg.sender === contact.contactInfo.username)
-    .reverse();
-
-  const [lastMessage] = msgs;
-  const { name, username } = contact.contactInfo;
-
+function renderContactItem(username: string, contact: Contact) {
+  let lastMessage = "";
+  let time = "";
+  getMessages(username, contact.username, 1).then((msgs) => {
+    if (msgs) {
+      const [msg] = msgs.messages;
+      if (msg) {
+        lastMessage = msg.message;
+        time = msg.time;
+      }
+    }
+  });
   return (
     <ContactItem
-      name={name}
-      contactUsername={username}
-      lastMessage={lastMessage ? lastMessage.message : ""}
-      time={lastMessage ? lastMessage.time : ""}
+      name={contact.name}
+      contactUsername={contact.username}
+      lastMessage={lastMessage}
+      time={time}
       key={uuidv4()}
     />
   );
@@ -132,15 +138,15 @@ function SearchBox({
 }: {
   toggleSearchBox: boolean;
   searchBoxRef: RefObject<HTMLInputElement>;
-  contacts: ChatInfo[];
-  setList: Dispatch<SetStateAction<ChatInfo[]>>;
+  contacts: Contact[];
+  setList: Dispatch<SetStateAction<Contact[]>>;
 }) {
   const handleSearchInputChange = () => {
     const queryString = searchBoxRef.current?.value.toLowerCase();
     setList(
       contacts.filter((contact) => {
         if (queryString) {
-          return contact.contactInfo.name.toLowerCase().includes(queryString);
+          return contact.name.toLowerCase().includes(queryString);
         } else {
           return true;
         }

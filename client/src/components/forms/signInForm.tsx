@@ -4,9 +4,9 @@ import { Label } from "../ui/label";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { FormElements, initializeSocket } from "../../lib/utils";
+import { FormElements, initializeSocket } from "../../lib/functions";
 import axios from "axios";
-import { useStore } from "@/lib/stores";
+import { useStore } from "@/lib/store";
 import { Checkbox } from "../ui/checkbox";
 
 export default function SignInForm() {

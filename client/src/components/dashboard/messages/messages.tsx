@@ -1,9 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { useStore } from "@/lib/stores";
-import { Message, getCurrentDate, getCurrentTime } from "@/lib/utils";
+import { useStore } from "@/lib/store";
+import { getCurrentDate, getCurrentTime } from "@/lib/utils";
 import Image from "next/image";
 import beginChat from "../../../../public/begin_chat.svg";
+import { Message, getMessages } from "@/lib/functions";
+import loader from "../../../../public/loader.svg";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 export default function Chat() {
   const {
@@ -13,7 +16,15 @@ export default function Chat() {
     contactName,
     messages,
     socket,
+    setMessages,
   } = useStore();
+
+  const [page, setPage] = useState(1);
+  const [hasMorePages, setHasMorePages] = useState(true);
+
+  useEffect(() => {
+    loadMessages();
+  }, []);
 
   useEffect(() => {
     {
@@ -24,38 +35,24 @@ export default function Chat() {
     }
   }, [socket]);
 
-  const renderMessageBubbles = () => {
-    const filteredMessages = messages().filter((msg) => {
-      const sender = msg.sender;
-      const receiver = msg.receiver;
-      return (
-        (receiver === contactUsername || receiver === username) &&
-        (sender === contactUsername || sender === username)
-      );
-    });
-
-    return filteredMessages
-      .reverse()
-      .map((msg) => (
-        <MessageBubble
-          key={uuidv4()}
-          message={msg}
-          type={msg.sender === username ? "send" : "receive"}
-        />
-      ));
+  const loadMessages = async () => {
+    const newMessages = await getMessages(username, contactUsername, page);
+    if (newMessages) {
+      setMessages(newMessages.messages);
+      setHasMorePages(newMessages.hasMorePages);
+      setPage((prev) => prev + 1);
+    }
   };
 
-  return (
-    <div className="flex flex-col-reverse gap-4 px-10 py-4 overflow-y-auto scroll-smooth h-full grow bg-gradient-to-t from-background to-blue-950">
-      {messages().length !== 0 ? (
-        renderMessageBubbles()
-      ) : (
-        <div className="grid place-content-center text-center h-full gap-10">
-          <p className="text-xl font-semibold text-slate-300">
-            Say Hi to {contactName.split(" ")[0]}!
-          </p>
-          <button
-            onClick={() => {
+  const GreetUser = () => {
+    return (
+      <div className="grid place-content-center text-center h-full gap-10 bg-gradient-to-t from-background to-blue-950">
+        <p className="text-xl font-semibold text-slate-300">
+          Say Hi to {contactName.split(" ")[0]}!
+        </p>
+        <button
+          onClick={() => {
+            socket &&
               socket.emit("send_message", {
                 sender: username,
                 receiver: contactUsername,
@@ -63,19 +60,60 @@ export default function Chat() {
                 date: getCurrentDate(),
                 time: getCurrentTime(),
               });
-            }}
-          >
+          }}
+        >
+          <Image
+            src={beginChat}
+            alt=""
+            height={window.innerWidth < 850 ? 100 : 150}
+            className="opacity-80"
+          />
+        </button>
+      </div>
+    );
+  };
+
+  const Messages = () => {
+    return (
+      <div
+        className="flex flex-col-reverse px-10 py-4 overflow-y-auto scroll-smooth grow bg-gradient-to-t from-background to-blue-950"
+        style={{
+          overflowAnchor: "none",
+        }}
+        id="scrollableDiv"
+      >
+        <InfiniteScroll
+          dataLength={page * 20}
+          next={loadMessages}
+          style={{
+            display: "flex",
+            flexDirection: "column-reverse",
+            gap: "0.5rem",
+          }}
+          inverse={true}
+          hasMore={hasMorePages}
+          loader={
             <Image
-              src={beginChat}
+              src={loader}
               alt=""
-              height={window.innerWidth < 850 ? 100 : 150}
-              className="opacity-80"
+              className="absolute lg:left-[61%] top-[10%] left-[42%]"
             />
-          </button>
-        </div>
-      )}
-    </div>
-  );
+          }
+          scrollableTarget="scrollableDiv"
+        >
+          {messages.map((msg) => (
+            <MessageBubble
+              key={uuidv4()}
+              message={msg}
+              type={msg.sender === username ? "send" : "receive"}
+            />
+          ))}
+        </InfiniteScroll>
+      </div>
+    );
+  };
+
+  return <>{messages.length !== 0 ? <Messages /> : <GreetUser />}</>;
 }
 
 function MessageBubble({ message, type }: { message: Message; type: string }) {

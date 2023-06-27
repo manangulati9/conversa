@@ -6,24 +6,25 @@ const app = express();
 const register = require("./routes/register");
 const login = require("./routes/login");
 const messages = require("./routes/messages");
+const userInfo = require("./routes/user");
 const cors = require("cors");
 const { Server } = require("socket.io");
 const http = require("http");
-const {
-  saveMessageToDB,
-  saveContact,
-  deleteContact,
-  deleteAllChats,
-} = require("./middleware/handle-data");
-const { generateRoomId } = require("./middleware/utils");
-const userData = require("./routes/user-data");
+const { saveMessageToDB } = require("./lib/saveMessage");
+const { generateRoomId } = require("./lib/utils");
 
-app.use(cors());
 app.use(express.json());
+app.use(
+  cors()
+  // cors({
+  //   origin: process.env.CLIENT_URL,
+  //   methods: ["GET", "POST"],
+  // })
+);
 app.use("/register", register);
 app.use("/login", login);
-app.use("/messages", messages);
-app.use("/user-data", userData);
+app.use("/user/messages", messages);
+app.use("/user", userInfo);
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -41,42 +42,16 @@ io.on("connection", (socket) => {
   onlineUsers.add(newUser);
   io.emit("online-users", Array.from(onlineUsers));
 
-  socket.on('join_room',({username,contactUsername})=>{
-    const room = generateRoomId(username,contactUsername);
+  socket.on("join_room", ({ username, contactUsername }) => {
+    const room = generateRoomId(username, contactUsername);
     socket.join(room);
-  })
+  });
 
   socket.on("send_message", async (data) => {
     const { sender, receiver } = data;
     const room = generateRoomId(sender, receiver);
     io.to(room).emit("receive_message", data);
     await saveMessageToDB(data);
-  });
-
-  socket.on("add_contact", async ({ username, contactUsername }) => {
-    try {
-      const newContact = await saveContact(username, contactUsername);
-      socket.emit("contact_added", newContact);
-    } catch (error) {
-      socket.emit("error", error);
-      console.error(error);
-    }
-  });
-
-  socket.on("delete_contact", async ({ username, contactUsername }) => {
-    try {
-      await deleteContact(username, contactUsername);
-    } catch (error) {
-      socket.emit("error", error);
-    }
-  });
-
-  socket.on("delete_chats_all", async ({ username, contactUsername }) => {
-    try {
-      await deleteAllChats(username, contactUsername);
-    } catch (error) {
-      socket.emit("error", error);
-    }
   });
 
   socket.on("disconnect", () => {

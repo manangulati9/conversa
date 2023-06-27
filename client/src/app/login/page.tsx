@@ -9,7 +9,7 @@ import illus4 from "../../../public/illus4.svg";
 export default function Home() {
   return (
     <main className="flex flex-col md:flex-row items-center w-screen h-screen justify-evenly">
-      <div className="flex-col justify-evenly hidden md:flex">
+      <div className="flex-col justify-evenly hidden md:flex ">
         <Image src={illus1} alt="" loading="eager" />
         <Image src={illus2} alt="" loading="eager" />
       </div>
@@ -17,7 +17,7 @@ export default function Home() {
         <Image src={Logo} priority alt="" />
         <SignInForm />
       </div>
-      <div className="flex flex-col justify-evenly">
+      <div className="flex flex-col items-center justify-evenly gap-10 pb-9">
         <Image
           src={illus4}
           alt=""

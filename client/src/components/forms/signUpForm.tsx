@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FormElements, User, initializeSocket } from "@/lib/utils";
+import { FormElements, User, initializeSocket } from "@/lib/functions";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import axios from "axios";
-import { useStore } from "@/lib/stores";
+import { useStore } from "@/lib/store";
 import { Checkbox } from "../ui/checkbox";
 
 export default function SignUpForm() {

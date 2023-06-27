@@ -1,4 +1,4 @@
-import { useStore } from "@/lib/stores";
+import { useStore } from "@/lib/store";
 import Messages from "./messages";
 import { TypeArea } from "./typeArea";
 import Header from "./header";

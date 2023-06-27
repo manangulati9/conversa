@@ -1,4 +1,4 @@
-import { useStore } from "@/lib/stores";
+import { useStore } from "@/lib/store";
 import Circle from "./avatar";
 import { useRouter } from "next/navigation";
 
@@ -13,8 +13,8 @@ export function Profile() {
         <button
           className="text-slate-400 hover:underline"
           onClick={() => {
-            router.push("/login");
-            logout();
+            window.location.href = "/";
+            // logout();
             socket &&
               socket.emit("leave_room", {
                 username: username,
