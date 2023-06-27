@@ -15,8 +15,7 @@ const poppins = Poppins({
 export default function () {
   const { username, contactUsername, contacts, socket } = useStore();
   if (username !== "" && contactUsername !== "") {
-    socket &&
-      socket.emit("join_room", { sender: username, receiver: contactUsername });
+    socket && socket.emit("join_room", { username, contactUsername });
   }
 
   return (

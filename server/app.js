@@ -41,6 +41,11 @@ io.on("connection", (socket) => {
   onlineUsers.add(newUser);
   io.emit("online-users", Array.from(onlineUsers));
 
+  socket.on('join_room',({username,contactUsername})=>{
+    const room = generateRoomId(username,contactUsername);
+    socket.join(room);
+  })
+
   socket.on("send_message", async (data) => {
     const { sender, receiver } = data;
     const room = generateRoomId(sender, receiver);

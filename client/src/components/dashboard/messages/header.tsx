@@ -1,5 +1,4 @@
 import { useStore } from "@/lib/stores";
-import { useEffect, useState } from "react";
 import Circle from "../sidebar/avatar";
 import MessageSearch from "./messageSearch";
 import DropDownMenu from "./dropDownMenu";
@@ -18,7 +17,7 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function () {
-  const { contactName, socket, contactUsername, onlineUsers } = useStore();
+  const { contactName, contactUsername, onlineUsers } = useStore();
   const router = useRouter();
 
   return (

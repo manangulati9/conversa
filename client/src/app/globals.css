@@ -110,16 +110,17 @@
   line-height: 24px;
   position: relative;
   padding: 10px 20px;
-  border-radius: 25px;
 }
 
 .send {
   color: var(--send-color);
-  background: var(--send-bg);
+  background: #39ff5a;
   align-self: flex-end;
+  border-radius: 25px;
 }
 .receive {
   background: var(--receive-bg);
   color: black;
   align-self: flex-start;
+  border-radius: 25px;
 }

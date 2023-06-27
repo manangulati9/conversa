@@ -17,7 +17,7 @@ export function ContactItem({
   const router = useRouter();
   const handleClick = () => {
     if (contactUsername !== "" && username !== "") {
-      socket.emit("join_room", { sender: username, receiver: contactUsername });
+      socket.emit("join_room", { username, contactUsername });
       setContactName(name);
       setContactUsername(contactUsername);
       if (window.innerWidth < 850) {

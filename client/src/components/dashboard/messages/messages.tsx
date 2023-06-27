@@ -4,7 +4,6 @@ import { useStore } from "@/lib/stores";
 import { Message, getCurrentDate, getCurrentTime } from "@/lib/utils";
 import Image from "next/image";
 import beginChat from "../../../../public/begin_chat.svg";
-import chatBg from "../../../../public/chat_bg.jpg";
 
 export default function Chat() {
   const {
@@ -17,10 +16,12 @@ export default function Chat() {
   } = useStore();
 
   useEffect(() => {
-    socket &&
-      socket.on("receive_message", (data: Message) => {
-        addMessage(data);
-      });
+    {
+      socket &&
+        socket.on("receive_message", (data: Message) => {
+          addMessage(data);
+        });
+    }
   }, [socket]);
 
   const renderMessageBubbles = () => {

@@ -21,10 +21,10 @@ export default function MessageSearch() {
   const searchButtonRef = useRef<HTMLDivElement>(null);
 
   const handleSearchChange = () => {
-    const queryString = searchRef.current?.value;
+    const queryString = searchRef.current?.value.toLowerCase();
     if (queryString) {
       const filteredMessages = messageStore().filter((msg) =>
-        msg.message.includes(queryString)
+        msg.message.toLowerCase().includes(queryString)
       );
       setMessages(filteredMessages);
     } else {
@@ -34,11 +34,11 @@ export default function MessageSearch() {
 
   const handleResultClick = () => {
     const queryString = searchRef.current?.value;
-    const messages = document.getElementsByClassName("bubble");
+    const msgs = document.getElementsByClassName("bubble");
 
-    if (messages && queryString) {
-      for (let i = 0; i < messages.length; i++) {
-        const message = messages[i];
+    if (msgs && queryString) {
+      for (let i = 0; i < msgs.length; i++) {
+        const message = msgs[i];
         const messageText = message.textContent;
 
         if (messageText && messageText.includes(queryString)) {
@@ -59,9 +59,7 @@ export default function MessageSearch() {
         <div
           className="p-2 rounded-full hover:bg-[#1D2C4E] transition-colors"
           ref={searchButtonRef}
-          onClick={() => {
-            setMessages([]);
-          }}
+          onClick={() => setMessages([])}
         >
           <Image src={Search2} alt="" width={25} />
         </div>
