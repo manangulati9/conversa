@@ -52,11 +52,11 @@
 
     --radius: 0.5rem;
 
-    --send-bg: #47cc44;
+    --send-bg: #39ff5a;
     --send-color: black;
     --receive-bg: white;
     --receive-text: black;
-    --page-background: white;
+    --page-background: #0f172a;
   }
 
   .dark {
@@ -136,7 +136,7 @@
   &:after {
     right: -26px;
     width: 26px;
-    background-color: #0f172a;
+    background-color: var(--page-background);
     border-bottom-left-radius: 10px;
   }
 }
@@ -155,7 +155,7 @@
   &:after {
     left: -26px;
     width: 26px;
-    background-color: #0f172a;
+    background-color: var(--page-background);
     border-bottom-right-radius: 10px;
   }
 }
