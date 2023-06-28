@@ -1,6 +1,6 @@
 # Conversa - Real-Time Chat App
 
-![Conversa Logo](./public/Logo.svg)
+![Conversa Logo](./client/public/Logo.svg)
 
 Conversa is a modern, real-time chat application built with Next.js, TypeScript, Tailwind CSS, Shadcn, Node.js, Express.js, MongoDB, and Socket.io. It provides a seamless and interactive chat experience with features like real-time texting, message searching, user management, and more.
 
