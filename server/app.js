@@ -21,12 +21,7 @@ app.use("/user/messages", messages);
 app.use("/user", userInfo);
 
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: process.env.CLIENT_URL,
-    methods: ["GET", "POST"],
-  },
-});
+const io = new Server(server);
 
 const onlineUsers = new Set();
 
