@@ -29,43 +29,6 @@ Conversa is a modern, real-time chat application built with Next.js, TypeScript,
   - MongoDB
   - Socket.io
 
-## Installation
-
-1. Clone the repository:
-
-   ```shell
-   git clone https://github.com/your-username/conversa.git
-   ```
-
-2. Navigate to the project directory:
-
-   ```shell
-   cd conversa
-   ```
-
-3. Install dependencies:
-
-   ```shell
-   npm install
-   ```
-
-4. Set up environment variables:
-
-   - Create a `.env` file in the root directory of the project.
-   - Add the following environment variables:
-
-     ```plaintext
-     MONGODB_URI=<your-mongodb-uri>
-     ```
-
-5. Start the development server:
-
-   ```shell
-   npm run dev
-   ```
-
-6. Open your browser and visit `http://localhost:3000` to access Conversa.
-
 ## Roadmap
 
 I have an exciting roadmap ahead with more features and improvements planned for Conversa:
