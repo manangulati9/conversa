@@ -11,6 +11,16 @@ export function TypeArea() {
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const handleTyping = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setInputValue(value);
+    if (value) {
+      socket.emit("typing", username);
+    } else {
+      socket.emit("stopTyping", username);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const message = inputValue.trim();
@@ -22,7 +32,10 @@ export function TypeArea() {
         date: getCurrentDate(),
         time: getCurrentTime(),
       };
-      socket && socket.emit("send_message", data);
+      if (socket) {
+        socket.emit("send_message", data);
+        socket.emit("stopTyping", username);
+      }
       setInputValue("");
       inputRef.current?.focus();
     }
@@ -74,9 +87,7 @@ export function TypeArea() {
           id="msg"
           ref={inputRef}
           value={inputValue}
-          onChange={(e) => {
-            setInputValue(e.target.value);
-          }}
+          onChange={handleTyping}
           autoComplete="off"
           autoFocus
         />

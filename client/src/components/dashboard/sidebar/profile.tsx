@@ -1,10 +1,8 @@
 import { useStore } from "@/lib/store";
 import Circle from "./avatar";
-import { useRouter } from "next/navigation";
 
 export function Profile() {
-  const router = useRouter();
-  const { name, username, contactUsername, logout, socket } = useStore();
+  const { name, username, contactUsername, socket } = useStore();
   return (
     <div className="flex gap-5 items-center w-full">
       <Circle letter={name[0]} bgColor="#54E346" />
@@ -13,10 +11,10 @@ export function Profile() {
         <button
           className="text-slate-400 hover:underline"
           onClick={() => {
-            window.location.href = "/";
-            // logout();
+            window.location.href = "/login";
+            localStorage.removeItem("token");
             socket &&
-              socket.emit("leave_room", {
+              socket.emit("stopTyping", {
                 username: username,
                 contact: contactUsername,
               });

@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import { useStore } from "@/lib/store";
 import { useEffect } from "react";
 import decode, { JwtPayload } from "jwt-decode";
-import { getUserData, initializeSocket } from "@/lib/functions";
+import { OnlineUsers, getUserData, initializeSocket } from "@/lib/functions";
 import { useRouter } from "next/navigation";
 const inter = Inter({ subsets: ["latin"] });
 
@@ -51,7 +51,7 @@ export default function RootLayout({
 
   useEffect(() => {
     socket &&
-      socket.on("online-users", (users: string[]) => {
+      socket.on("online-users", (users: OnlineUsers[]) => {
         setOnlineUsers(users);
       });
   }, [socket]);

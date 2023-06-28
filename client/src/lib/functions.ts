@@ -29,22 +29,22 @@ export interface FormElements extends HTMLFormControlsCollection {
   confirmPwd: HTMLInputElement;
 }
 
-export async function getMessages(
-  username: string,
-  contactUsername: string,
-  pageNum: number
-) {
+export interface OnlineUsers {
+  username: string;
+  socketId: string;
+}
+
+export async function getMessages(username: string, contactUsername: string) {
   try {
     const payload = {
       username: username,
       contactUsername: contactUsername,
-      page: pageNum,
     };
     const res = await axios.post(
       process.env.NEXT_PUBLIC_GET_MESSAGES!,
       payload
     );
-    return res.data as { messages: Message[]; hasMorePages: boolean };
+    return res.data as Message[];
   } catch (error: any) {
     console.error(error);
     return null;
@@ -142,9 +142,9 @@ export async function deleteMessageFromDB(
   }
 }
 
-export function initializeSocket(newUser: string) {
+export function initializeSocket(username: string) {
   const socket = io(process.env.NEXT_PUBLIC_SOCKET_SERVER_URL!, {
-    query: { newUser },
+    query: { username },
   });
   return socket;
 }

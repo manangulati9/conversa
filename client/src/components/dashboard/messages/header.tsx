@@ -21,7 +21,7 @@ export default function () {
   const router = useRouter();
 
   return (
-    <header className="flex justify-between py-4 px-8 items-center">
+    <header className="flex justify-between py-4 px-8 items-center border-b-2 border-slate-500">
       {window.innerWidth < 850 && (
         <button
           onClick={() => router.push("/")}
@@ -36,7 +36,9 @@ export default function () {
         <div>
           <p className="text-base font-semibold">{contactName}</p>
           <p className="text-primary font-medium">
-            {onlineUsers.includes(contactUsername) ? "online" : "offline"}
+            {onlineUsers.some((user) => user.username === contactUsername)
+              ? "online"
+              : "offline"}
           </p>
         </div>
       </div>

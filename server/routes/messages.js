@@ -4,9 +4,7 @@ const Message = require("../models/message");
 
 router.post("/", async (req, res) => {
   try {
-    const { username, contactUsername, page } = req.body;
-    const pageSize = 20;
-    const offset = (page - 1) * pageSize;
+    const { username, contactUsername } = req.body;
 
     const messagesQuery = {
       $or: [
@@ -16,23 +14,12 @@ router.post("/", async (req, res) => {
       deletedBy: { $nin: [username] },
     };
 
-    const totalMessagesCount = await Message.countDocuments(messagesQuery);
-
     const messages = await Message.find(
       messagesQuery,
       "message sender receiver time date"
-    )
-      .sort({ createdAt: -1 })
-      .skip(offset)
-      .limit(pageSize)
-      .lean();
+    ).sort({ createdAt: -1 });
 
-    const hasMorePages = offset + pageSize < totalMessagesCount;
-
-    res.status(200).json({
-      messages,
-      hasMorePages,
-    });
+    res.status(200).json(messages);
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal server error");

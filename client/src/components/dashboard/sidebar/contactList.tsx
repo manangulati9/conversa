@@ -50,7 +50,7 @@ export function ContactList() {
       </div>
       {contacts.length !== 0 ? (
         <ScrollArea className="py-3 border-slate-500">
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-2">
             {renderContactItems(username, list)}
           </div>
         </ScrollArea>
@@ -85,9 +85,9 @@ function renderContactItems(username: string, list: Contact[]) {
 function renderContactItem(username: string, contact: Contact) {
   let lastMessage = "";
   let time = "";
-  getMessages(username, contact.username, 1).then((msgs) => {
+  getMessages(username, contact.username).then((msgs) => {
     if (msgs) {
-      const [msg] = msgs.messages;
+      const [msg] = msgs;
       if (msg) {
         lastMessage = msg.message;
         time = msg.time;

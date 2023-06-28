@@ -14,13 +14,7 @@ const { saveMessageToDB } = require("./lib/saveMessage");
 const { generateRoomId } = require("./lib/utils");
 
 app.use(express.json());
-app.use(
-  cors()
-  // cors({
-  //   origin: process.env.CLIENT_URL,
-  //   methods: ["GET", "POST"],
-  // })
-);
+app.use(cors());
 app.use("/register", register);
 app.use("/login", login);
 app.use("/user/messages", messages);
@@ -38,7 +32,8 @@ const onlineUsers = new Set();
 
 io.on("connection", (socket) => {
   console.log(`User connected ${socket.id}`);
-  const { newUser } = socket.handshake.query;
+  const { username } = socket.handshake.query;
+  const newUser = { username: username, socketId: socket.id };
   onlineUsers.add(newUser);
   io.emit("online-users", Array.from(onlineUsers));
 
@@ -57,6 +52,24 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     onlineUsers.delete(newUser);
     io.emit("online-users", Array.from(onlineUsers));
+  });
+
+  socket.on("typing", (sender) => {
+    const recipients = Array.from(onlineUsers).filter(
+      (user) => user.username !== sender
+    );
+    recipients.forEach((recipient) => {
+      socket.to(recipient.socketId).emit("typing", sender);
+    });
+  });
+
+  socket.on("stopTyping", (sender) => {
+    const recipients = Array.from(onlineUsers).filter(
+      (user) => user.username !== sender
+    );
+    recipients.forEach((recipient) => {
+      socket.to(recipient.socketId).emit("stopTyping", sender);
+    });
   });
 });
 

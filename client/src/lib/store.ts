@@ -2,6 +2,7 @@ import { create } from "zustand";
 import {
   Contact,
   Message,
+  OnlineUsers,
   User,
   addNewContactInDB,
   deletAllMessagesFromDB,
@@ -18,8 +19,8 @@ interface StoreType {
   messages: Message[];
   token: string;
   socket: any;
-  onlineUsers: string[];
-  setOnlineUsers: (s: string[]) => void;
+  onlineUsers: OnlineUsers[];
+  setOnlineUsers: (s: { username: string; socketId: string }[]) => void;
   setSocket: (s: any) => void;
   initStates: (data: User) => void;
   setToken: (t: string) => void;
@@ -33,7 +34,6 @@ interface StoreType {
   deleteContact: (s: string) => void;
   deleteAllMessages: () => void;
   deleteMessageForMe: (m: Message) => void;
-  logout: () => void;
 }
 
 export const useStore = create<StoreType>((set, get) => ({
@@ -47,7 +47,7 @@ export const useStore = create<StoreType>((set, get) => ({
   socket: null,
   onlineUsers: [],
 
-  setOnlineUsers: (s: string[]) => set({ onlineUsers: s }),
+  setOnlineUsers: (s: OnlineUsers[]) => set({ onlineUsers: s }),
   setSocket: (s: any) => set({ socket: s }),
   setToken: (t: string) => set({ token: t }),
   setName: (s: string) => set({ name: s }),
@@ -71,23 +71,20 @@ export const useStore = create<StoreType>((set, get) => ({
     }
   },
 
-  logout: () => {
-    set({
-      name: "",
-      username: "",
-      contacts: [],
-      contactName: "",
-      contactUsername: "",
-    });
-    localStorage.removeItem("token");
-  },
-
   addContact: async (u: string) => {
     const username = get().username;
     const contactUsername = get().contactUsername;
     const contact = await addNewContactInDB(username, u);
+    const contacts = get().contacts;
     if (contact && !contactUsername) {
-      set({ contactUsername: contact.username, contactName: contact.name });
+      set({
+        contactUsername: contact.username,
+        contactName: contact.name,
+      });
+    }
+    if (contact) {
+      contacts.push(contact);
+      set({ contacts: contacts });
     }
   },
 
@@ -102,7 +99,12 @@ export const useStore = create<StoreType>((set, get) => ({
     const newContactList = contacts.filter((c) => {
       return c.username !== contactUsername;
     });
-    set({ contacts: newContactList });
+    set({
+      contacts: newContactList,
+      contactName: newContactList.length !== 0 ? newContactList[0].name : "",
+      contactUsername:
+        newContactList.length !== 0 ? newContactList[0].username : "",
+    });
     deleteContactInDB(username, contactUsername);
   },
 
@@ -124,9 +126,5 @@ export const useStore = create<StoreType>((set, get) => ({
     deleteMessageFromDB(username, contactUsername, m.message);
   },
 
-  setMessages: (m: Message[]) => {
-    const messages = get().messages;
-    messages.push(...m);
-    set({ messages: messages });
-  },
+  setMessages: (m: Message[]) => set({ messages: m }),
 }));

@@ -5,8 +5,7 @@ import { getCurrentDate, getCurrentTime } from "@/lib/utils";
 import Image from "next/image";
 import beginChat from "../../../../public/begin_chat.svg";
 import { Message, getMessages } from "@/lib/functions";
-import loader from "../../../../public/loader.svg";
-import InfiniteScroll from "react-infinite-scroll-component";
+import typing from "../../../../public/typing.svg";
 
 export default function Chat() {
   const {
@@ -19,12 +18,35 @@ export default function Chat() {
     setMessages,
   } = useStore();
 
-  const [page, setPage] = useState(1);
-  const [hasMorePages, setHasMorePages] = useState(true);
+  const [typingUsers, setTypingUsers] = useState<string[]>([]);
 
   useEffect(() => {
-    loadMessages();
+    socket.on("typing", (sender: string) => {
+      setTypingUsers((prevTypingUsers) => {
+        if (!prevTypingUsers.includes(sender)) {
+          return [...prevTypingUsers, sender];
+        }
+        return prevTypingUsers;
+      });
+    });
+
+    socket.on("stopTyping", (sender: string) => {
+      setTypingUsers((prevTypingUsers) =>
+        prevTypingUsers.filter((user) => user !== sender)
+      );
+    });
+
+    return () => {
+      socket.off("typing");
+      socket.off("stopTyping");
+    };
   }, []);
+
+  useEffect(() => {
+    getMessages(username, contactUsername).then((msgs) => {
+      if (msgs) setMessages(msgs);
+    });
+  }, [contactUsername]);
 
   useEffect(() => {
     {
@@ -35,18 +57,9 @@ export default function Chat() {
     }
   }, [socket]);
 
-  const loadMessages = async () => {
-    const newMessages = await getMessages(username, contactUsername, page);
-    if (newMessages) {
-      setMessages(newMessages.messages);
-      setHasMorePages(newMessages.hasMorePages);
-      setPage((prev) => prev + 1);
-    }
-  };
-
   const GreetUser = () => {
     return (
-      <div className="grid place-content-center text-center h-full gap-10 bg-gradient-to-t from-background to-blue-950">
+      <div className="grid place-content-center text-center h-full gap-10">
         <p className="text-xl font-semibold text-slate-300">
           Say Hi to {contactName.split(" ")[0]}!
         </p>
@@ -75,40 +88,19 @@ export default function Chat() {
 
   const Messages = () => {
     return (
-      <div
-        className="flex flex-col-reverse px-10 py-4 overflow-y-auto scroll-smooth grow bg-gradient-to-t from-background to-blue-950"
-        style={{
-          overflowAnchor: "none",
-        }}
-        id="scrollableDiv"
-      >
-        <InfiniteScroll
-          dataLength={page * 20}
-          next={loadMessages}
-          style={{
-            display: "flex",
-            flexDirection: "column-reverse",
-            gap: "0.5rem",
-          }}
-          inverse={true}
-          hasMore={hasMorePages}
-          loader={
-            <Image
-              src={loader}
-              alt=""
-              className="absolute lg:left-[61%] top-[10%] left-[42%]"
-            />
-          }
-          scrollableTarget="scrollableDiv"
-        >
-          {messages.map((msg) => (
-            <MessageBubble
-              key={uuidv4()}
-              message={msg}
-              type={msg.sender === username ? "send" : "receive"}
-            />
-          ))}
-        </InfiniteScroll>
+      <div className="flex overflow-y-auto flex-col-reverse gap-3 px-10 py-4 grow">
+        {typingUsers.length !== 0 ? (
+          <div className="receive bubble">
+            <Image src={typing} alt="" height={50} className="w-8 h-5" />
+          </div>
+        ) : null}
+        {messages.map((msg) => (
+          <MessageBubble
+            key={uuidv4()}
+            message={msg}
+            type={msg.sender === username ? "send" : "receive"}
+          />
+        ))}
       </div>
     );
   };
