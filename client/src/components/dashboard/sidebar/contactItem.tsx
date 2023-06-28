@@ -13,16 +13,13 @@ export function ContactItem({
   lastMessage?: string;
   time?: string;
 }) {
-  const { username, setContactName, setContactUsername, socket } = useStore();
+  const { username, setContactName, setContactUsername } = useStore();
   const router = useRouter();
   const handleClick = () => {
-    if (contactUsername !== "" && username !== "" && socket) {
-      socket.emit("join_room", { username, contactUsername });
-      setContactName(name);
-      setContactUsername(contactUsername);
-      if (window.innerWidth < 850) {
-        router.push(`/${username}-${contactUsername}`);
-      }
+    setContactName(name);
+    setContactUsername(contactUsername);
+    if (window.innerWidth < 850) {
+      router.push(`/${username}-${contactUsername}`);
     }
   };
   return (

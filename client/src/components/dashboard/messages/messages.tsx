@@ -1,61 +1,16 @@
-import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useStore } from "@/lib/store";
 import { getCurrentDate, getCurrentTime } from "@/lib/utils";
 import Image from "next/image";
 import beginChat from "../../../../public/begin_chat.svg";
-import { Message, getMessages } from "@/lib/functions";
+import { Message } from "@/lib/functions";
 import typing from "../../../../public/typing.svg";
+import { useMessages } from "@/lib/hooks";
 
 export default function Chat() {
-  const {
-    username,
-    contactUsername,
-    addMessage,
-    contactName,
-    messages,
-    socket,
-    setMessages,
-  } = useStore();
-
-  const [typingUsers, setTypingUsers] = useState<string[]>([]);
-
-  useEffect(() => {
-    socket.on("typing", (sender: string) => {
-      setTypingUsers((prevTypingUsers) => {
-        if (!prevTypingUsers.includes(sender)) {
-          return [...prevTypingUsers, sender];
-        }
-        return prevTypingUsers;
-      });
-    });
-
-    socket.on("stopTyping", (sender: string) => {
-      setTypingUsers((prevTypingUsers) =>
-        prevTypingUsers.filter((user) => user !== sender)
-      );
-    });
-
-    return () => {
-      socket.off("typing");
-      socket.off("stopTyping");
-    };
-  }, []);
-
-  useEffect(() => {
-    getMessages(username, contactUsername).then((msgs) => {
-      if (msgs) setMessages(msgs);
-    });
-  }, [contactUsername]);
-
-  useEffect(() => {
-    {
-      socket &&
-        socket.on("receive_message", (data: Message) => {
-          addMessage(data);
-        });
-    }
-  }, [socket]);
+  const { contactName, socket, username, contactUsername, messages } =
+    useStore();
+  const { typingUsers } = useMessages();
 
   const GreetUser = () => {
     return (

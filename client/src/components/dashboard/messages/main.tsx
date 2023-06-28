@@ -5,6 +5,7 @@ import Header from "./header";
 import Image from "next/image";
 import illus from "../../../../public/chatting-illus.svg";
 import { Poppins } from "next/font/google";
+import { useEffect } from "react";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -13,10 +14,14 @@ const poppins = Poppins({
 });
 
 export default function () {
-  const { username, contactUsername, contacts, socket } = useStore();
-  if (username !== "" && contactUsername !== "") {
-    socket && socket.emit("join_room", { username, contactUsername });
-  }
+  const { username, contactName, contactUsername, contacts, socket } =
+    useStore();
+
+  useEffect(() => {
+    if (username !== "" && contactUsername !== "") {
+      socket && socket.emit("join_room", { username, contactUsername });
+    }
+  }, [contactName, contactUsername]);
 
   return (
     <>

@@ -54,6 +54,10 @@ export default function RootLayout({
       socket.on("online-users", (users: OnlineUsers[]) => {
         setOnlineUsers(users);
       });
+
+    return () => {
+      socket && socket.off("online-users");
+    };
   }, [socket]);
 
   return (
