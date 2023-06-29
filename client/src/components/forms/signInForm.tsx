@@ -4,14 +4,12 @@ import { Label } from "../ui/label";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { FormElements, initializeSocket } from "../../lib/functions";
+import { FormElements } from "../../lib/functions";
 import axios from "axios";
-import { useStore } from "@/lib/store";
 import { Checkbox } from "../ui/checkbox";
 
 export default function SignInForm() {
   const router = useRouter();
-  const { initStates, setSocket } = useStore();
   const [inputType, setInputType] = useState("password");
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -28,9 +26,7 @@ export default function SignInForm() {
       if (res.status === 200) {
         const user = res.data;
         localStorage.setItem("token", user.token);
-        setSocket(initializeSocket(user.username));
-        initStates(user);
-        router.push("/home");
+        router.push("/");
       }
     } catch (error: any) {
       alert(error.response.data);

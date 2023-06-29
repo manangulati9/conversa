@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { DecodedToken, Message, getMessages, isTokenValid } from "./functions";
+import { Message, getMessages, getTokenData } from "./functions";
 import { useStore } from "./store";
 import { OnlineUsers, getUserData, initializeSocket } from "@/lib/functions";
 import { useRouter } from "next/navigation";
-import decode from "jwt-decode";
 
 export function useMessages() {
   const { username, contactUsername, addMessage, socket, setMessages } =
@@ -57,39 +56,20 @@ export function useMessages() {
   return { typingUsers };
 }
 
-export function useInitHome() {
+export function useInitApp() {
   const router = useRouter();
-  const {
-    initStates,
-    setToken,
-    username,
-    setSocket,
-    socket,
-    setOnlineUsers,
-    onlineUsers,
-  } = useStore();
+
+  const { initStates, setToken, username, setSocket, socket, setOnlineUsers } =
+    useStore();
+
+  const { token, decodedUsername } = getTokenData();
 
   useEffect(() => {
-    const checkTokenAndUserData = async () => {
-      const storedToken = localStorage.getItem("token");
-
-      if (!isTokenValid(storedToken)) {
-        router.push("/login");
-        return;
-      }
-
-      const decodedToken = decode<DecodedToken>(storedToken as string);
-      const decodedUsername = decodedToken?.username;
-      setSocket(initializeSocket(decodedUsername));
-      if (!username) {
-        const userData = await getUserData(decodedUsername);
-        if (userData) initStates(userData);
-      }
-
-      setToken(storedToken as string);
-    };
-
-    checkTokenAndUserData();
+    if (!token && !decodedUsername) {
+      router.push("/login");
+      return;
+    }
+    setSocket(initializeSocket(decodedUsername));
 
     return () => {
       socket && socket.disconnect();
@@ -97,10 +77,20 @@ export function useInitHome() {
   }, []);
 
   useEffect(() => {
+    if (token && decodedUsername) {
+      getUserData(decodedUsername).then((userData) => {
+        if (userData) {
+          initStates(userData);
+        }
+        setToken(token);
+      });
+    }
+  }, [username]);
+
+  useEffect(() => {
     socket &&
       socket.on("online-users", (users: OnlineUsers[]) => {
         setOnlineUsers(users);
-        console.log(onlineUsers);
       });
 
     return () => {

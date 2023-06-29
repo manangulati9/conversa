@@ -1,6 +1,5 @@
 import { useStore } from "@/lib/store";
 import Circle from "./avatar";
-import { useRouter } from "next/navigation";
 
 export function ContactItem({
   name,
@@ -13,13 +12,12 @@ export function ContactItem({
   lastMessage?: string;
   time?: string;
 }) {
-  const { username, setContactName, setContactUsername } = useStore();
-  const router = useRouter();
+  const { setContactName, setContactUsername, setToggleSidebar } = useStore();
   const handleClick = () => {
     setContactName(name);
     setContactUsername(contactUsername);
-    if (window.innerWidth < 850) {
-      router.push(`/${username}-${contactUsername}`);
+    if (window.innerWidth < 750) {
+      setToggleSidebar(false);
     }
   };
   return (

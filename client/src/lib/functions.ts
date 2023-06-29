@@ -153,21 +153,26 @@ export function initializeSocket(username: string) {
   return socket;
 }
 
-export function isTokenValid(token: string | null): boolean {
-  if (!token) {
-    return false;
-  }
+export function getTokenData() {
+  let token = "";
+  let decodedUsername = "";
 
   try {
-    const decodedToken = decode<DecodedToken>(token);
-    const currentTime = Date.now() / 1000;
+    const storedToken = localStorage.getItem("token");
+    const currentTime = Math.floor(Date.now() / 1000);
 
-    if (decodedToken.exp && decodedToken.exp < currentTime) {
-      return false;
+    if (storedToken) {
+      const decodedToken = decode<DecodedToken>(storedToken);
+      const { username, exp } = decodedToken;
+
+      if (exp && exp > currentTime) {
+        token = storedToken;
+        decodedUsername = username;
+      }
     }
-
-    return true;
   } catch (error) {
-    return false;
+    console.error(error);
   }
+
+  return { token, decodedUsername };
 }

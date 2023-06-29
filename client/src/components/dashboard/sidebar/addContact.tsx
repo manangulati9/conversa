@@ -43,8 +43,9 @@ export function AddContact() {
           ref={formRef}
           onSubmit={(e: FormEvent) => {
             e.preventDefault();
-            const contactUsername = (formRef.current?.elements as ContactForm)
-              .contact_username.value;
+            const contactUsername = (
+              formRef.current?.elements as ContactForm
+            ).contact_username.value.trim();
             addContact(contactUsername);
             document.getElementById("dialog-trigger")?.click();
           }}

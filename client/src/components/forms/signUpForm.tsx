@@ -1,17 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FormElements, User, initializeSocket } from "@/lib/functions";
+import { FormElements, User } from "@/lib/functions";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import axios from "axios";
-import { useStore } from "@/lib/store";
 import { Checkbox } from "../ui/checkbox";
 
 export default function SignUpForm() {
   const router = useRouter();
-  const { initStates, setSocket } = useStore();
   const [inputType, setInputType] = useState("password");
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -33,9 +31,7 @@ export default function SignUpForm() {
         if (res.status === 200) {
           const user: User = res.data;
           localStorage.setItem("token", user.token);
-          setSocket(initializeSocket(user.username));
-          initStates(user);
-          router.push("/home");
+          router.push("/");
         }
       } else {
         alert("Password doesn't match. Please try again");

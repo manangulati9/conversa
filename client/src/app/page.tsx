@@ -1,13 +1,32 @@
 "use client";
 
-import { useInitHome } from "@/lib/hooks";
-import Home from "./home/page";
+import { useInitApp } from "@/lib/hooks";
+import { useEffect, useState } from "react";
+import Messages from "@/components/dashboard/messages/main";
+import Sidebar from "@/components/dashboard/sidebar/main";
+import MobileLayout from "@/components/dashboard/mobileLayout";
 
 export default function () {
-  useInitHome();
+  useInitApp();
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    if (window.innerWidth < 750) {
+      setIsMobile(true);
+    }
+  }, []);
+
   return (
     <>
-      <Home />
+      {isMobile ? (
+        <MobileLayout />
+      ) : (
+        <div className="text-sm flex">
+          <Sidebar />
+          <Messages />
+        </div>
+      )}
     </>
   );
 }

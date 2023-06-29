@@ -19,6 +19,7 @@ interface StoreType {
   messages: Message[];
   token: string;
   socket: any;
+  toggleSidebar: boolean;
   onlineUsers: OnlineUsers[];
   setOnlineUsers: (s: { username: string; socketId: string }[]) => void;
   setSocket: (s: any) => void;
@@ -34,6 +35,7 @@ interface StoreType {
   deleteContact: (s: string) => void;
   deleteAllMessages: () => void;
   deleteMessageForMe: (m: Message) => void;
+  setToggleSidebar: (t: boolean) => void;
 }
 
 export const useStore = create<StoreType>((set, get) => ({
@@ -46,6 +48,7 @@ export const useStore = create<StoreType>((set, get) => ({
   token: "",
   socket: null,
   onlineUsers: [],
+  toggleSidebar: true,
 
   setOnlineUsers: (s: OnlineUsers[]) => set({ onlineUsers: s }),
   setSocket: (s: any) => set({ socket: s }),
@@ -54,6 +57,7 @@ export const useStore = create<StoreType>((set, get) => ({
   setUsername: (s: string) => set({ username: s }),
   setContactName: (s: string) => set({ contactName: s }),
   setContactUsername: (s: string) => set({ contactUsername: s }),
+  setToggleSidebar: (t: boolean) => set({ toggleSidebar: t }),
 
   initStates: async (userData: User) => {
     if (userData) {

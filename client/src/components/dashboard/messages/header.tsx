@@ -14,17 +14,16 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 export default function () {
-  const { contactName, contactUsername, onlineUsers } = useStore();
-  const router = useRouter();
+  const { contactName, contactUsername, onlineUsers, setToggleSidebar } =
+    useStore();
 
   return (
     <header className="flex justify-between py-4 px-8 items-center border-b-2 border-slate-500">
-      {window.innerWidth < 850 && (
+      {window.innerWidth < 750 && (
         <button
-          onClick={() => router.push("/home")}
+          onClick={() => setToggleSidebar(true)}
           className="border p-2 rounded-full"
         >
           <ArrowLeft />
