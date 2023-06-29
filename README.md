@@ -37,7 +37,7 @@ I have an exciting roadmap ahead with more features and improvements planned for
 - User profiles: Enhance the user experience by adding customizable user profiles.
 - Group chat: Enable users to create and participate in group chats.
 
-I encourage you to contribute to Conversa by submitting bug reports, feature requests, or pull requests. Together, I can make Conversa an even better chat app!
+I encourage you to contribute to Conversa by submitting bug reports, feature requests, or pull requests.
 
 ## License
 
