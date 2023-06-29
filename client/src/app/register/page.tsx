@@ -8,16 +8,16 @@ import illus4 from "../../../public/illus4.svg";
 import SignUpForm from "@/components/forms/signUpForm";
 export default function Home() {
   return (
-    <main className="flex w-screen h-screen justify-around">
-      <div className="flex flex-col justify-evenly">
+    <main className="flex flex-col md:flex-row w-screen h-screen justify-evenly p-8">
+      <div className="flex-col justify-evenly hidden md:flex">
         <Image src={illus1} alt="" loading="eager" />
         <Image src={illus2} alt="" loading="eager" />
       </div>
-      <div className="flex flex-col justify-center items-center gap-12">
+      <div className="flex flex-col justify-center items-center gap-10">
         <Image src={Logo} priority alt="" />
         <SignUpForm />
       </div>
-      <div className="flex flex-col justify-evenly gap-10 pb-9">
+      <div className="flex-col justify-evenly gap-10 pb-9 hidden md:flex">
         <Image src={illus4} alt="" loading="eager" />
         <Image src={illus3} alt="" height={260} loading="eager" />
       </div>
