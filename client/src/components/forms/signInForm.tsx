@@ -30,7 +30,7 @@ export default function SignInForm() {
         localStorage.setItem("token", user.token);
         setSocket(initializeSocket(user.username));
         initStates(user);
-        router.push("/");
+        router.push("/home");
       }
     } catch (error: any) {
       alert(error.response.data);

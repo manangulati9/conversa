@@ -1,3 +1,4 @@
+"use client";
 import { useStore } from "@/lib/store";
 import Messages from "./messages";
 import { TypeArea } from "./typeArea";

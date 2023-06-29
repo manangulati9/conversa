@@ -1,12 +1,13 @@
 "use client";
-import Messages from "@/components/dashboard/messages/main";
-import Sidebar from "@/components/dashboard/sidebar/main";
 
-export default function Home() {
+import { useInitHome } from "@/lib/hooks";
+import Home from "./home/page";
+
+export default function () {
+  useInitHome();
   return (
-    <div className="text-sm flex">
-      <Sidebar />
-      {window.innerWidth > 850 && <Messages />}
-    </div>
+    <>
+      <Home />
+    </>
   );
 }

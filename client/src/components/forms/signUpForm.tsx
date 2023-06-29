@@ -35,7 +35,7 @@ export default function SignUpForm() {
           localStorage.setItem("token", user.token);
           setSocket(initializeSocket(user.username));
           initStates(user);
-          router.push("/");
+          router.push("/home");
         }
       } else {
         alert("Password doesn't match. Please try again");

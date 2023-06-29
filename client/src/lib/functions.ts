@@ -1,6 +1,6 @@
 import axios from "axios";
 import { io } from "socket.io-client";
-
+import decode, { JwtPayload } from "jwt-decode";
 export interface User {
   name: string;
   username: string;
@@ -32,6 +32,10 @@ export interface FormElements extends HTMLFormControlsCollection {
 export interface OnlineUsers {
   username: string;
   socketId: string;
+}
+
+export interface DecodedToken extends JwtPayload {
+  username: string;
 }
 
 export async function getMessages(username: string, contactUsername: string) {
@@ -147,4 +151,23 @@ export function initializeSocket(username: string) {
     query: { username },
   });
   return socket;
+}
+
+export function isTokenValid(token: string | null): boolean {
+  if (!token) {
+    return false;
+  }
+
+  try {
+    const decodedToken = decode<DecodedToken>(token);
+    const currentTime = Date.now() / 1000;
+
+    if (decodedToken.exp && decodedToken.exp < currentTime) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    return false;
+  }
 }

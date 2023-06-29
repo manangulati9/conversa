@@ -24,7 +24,7 @@ export default function () {
     <header className="flex justify-between py-4 px-8 items-center border-b-2 border-slate-500">
       {window.innerWidth < 850 && (
         <button
-          onClick={() => router.push("/")}
+          onClick={() => router.push("/home")}
           className="border p-2 rounded-full"
         >
           <ArrowLeft />
