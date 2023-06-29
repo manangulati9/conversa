@@ -45,7 +45,7 @@ This project is licensed under the [MIT License](https://opensource.org/licenses
 
 ## Acknowledgements
 
-I would like to thank the open-source community for their invaluable contributions and the developers of the libraries and tools used in this project.
+I would like to thank the developers of the libraries and tools used in this project.
 
 - Next.js: [https://nextjs.org/](https://nextjs.org/)
 - TypeScript: [https://www.typescriptlang.org/](https://www.typescriptlang.org/)
@@ -61,7 +61,7 @@ I would like to thank the open-source community for their invaluable contributio
 - Found a bug or have a feature request? [Submit an issue](https://github.com/your-username/conversa/issues).
 - Want to contribute to Conversa? Fork the repository and submit a pull request.
 
-I Ilcome and appreciate your feedback and contributions!
+I welcome and appreciate your feedback and contributions!
 
 ---
 

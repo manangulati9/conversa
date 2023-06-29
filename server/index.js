@@ -19,7 +19,7 @@ io.on("connection", (socket) => {
   const { username } = socket.handshake.query;
   const newUser = { username: username, socketId: socket.id };
   onlineUsers.add(newUser);
-  io.emit("online-users", Array.from(onlineUsers));
+  socket.emit("online-users", Array.from(onlineUsers));
 
   socket.on("join_room", ({ username, contactUsername }) => {
     const room = generateRoomId(username, contactUsername);
@@ -35,7 +35,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     onlineUsers.delete(newUser);
-    io.emit("online-users", Array.from(onlineUsers));
+    socket.emit("online-users", Array.from(onlineUsers));
   });
 
   socket.on("typing", (sender) => {

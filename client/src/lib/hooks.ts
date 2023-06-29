@@ -12,20 +12,22 @@ export function useMessages() {
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
 
   useEffect(() => {
-    socket.on("typing", (sender: string) => {
-      setTypingUsers((prevTypingUsers) => {
-        if (!prevTypingUsers.includes(sender)) {
-          return [...prevTypingUsers, sender];
-        }
-        return prevTypingUsers;
+    socket &&
+      socket.on("typing", (sender: string) => {
+        setTypingUsers((prevTypingUsers) => {
+          if (!prevTypingUsers.includes(sender)) {
+            return [...prevTypingUsers, sender];
+          }
+          return prevTypingUsers;
+        });
       });
-    });
 
-    socket.on("stopTyping", (sender: string) => {
-      setTypingUsers((prevTypingUsers) =>
-        prevTypingUsers.filter((user) => user !== sender)
-      );
-    });
+    socket &&
+      socket.on("stopTyping", (sender: string) => {
+        setTypingUsers((prevTypingUsers) =>
+          prevTypingUsers.filter((user) => user !== sender)
+        );
+      });
 
     return () => {
       socket && socket.off("typing");
@@ -57,8 +59,15 @@ export function useMessages() {
 
 export function useInitHome() {
   const router = useRouter();
-  const { initStates, setToken, username, setSocket, socket, setOnlineUsers } =
-    useStore();
+  const {
+    initStates,
+    setToken,
+    username,
+    setSocket,
+    socket,
+    setOnlineUsers,
+    onlineUsers,
+  } = useStore();
 
   useEffect(() => {
     const checkTokenAndUserData = async () => {
@@ -91,6 +100,7 @@ export function useInitHome() {
     socket &&
       socket.on("online-users", (users: OnlineUsers[]) => {
         setOnlineUsers(users);
+        console.log(onlineUsers);
       });
 
     return () => {
